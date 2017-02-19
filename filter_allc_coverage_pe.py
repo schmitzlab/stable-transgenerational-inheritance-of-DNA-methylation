@@ -6,6 +6,8 @@ from bioFiles import *
 # about positions which have at least minCov reads for each sample
 # expects all chromosomes in one allC file
 
+PICKLE=False
+
 def processInputs( allcPath, sampleNamesAr, minCov, numProc ):
 	print( 'AllC path:', allcPath )
 	print( 'Samples:', ', '.join(sampleNamesAr) )
@@ -33,7 +35,7 @@ def processInputs( allcPath, sampleNamesAr, minCov, numProc ):
 
 def getCovPositionSample( allcPath, sampleName, minCov ):
 	mFile = FileAllC_full( os.path.normpath( '{:s}/allc_{:s}.tsv'.format( allcPath, sampleName ) ) )
-	mDict = mFile.getAllCDict( mtypes = 'C' )
+	mDict = mFile.getAllCDict( mtypes = 'C', isPickle=PICKLE )
 	outDict = {}
 	# loop through chromosomes
 	for chrm in mDict.keys():
