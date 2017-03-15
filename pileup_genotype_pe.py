@@ -5,6 +5,7 @@ import sys, math, glob, multiprocessing, subprocess, os, bisect, random
 
 NUMPROC=1
 NUCAR = ['A', 'C', 'G', 'T', 'a', 'c', 'g', 't' ]
+MINCOV = 1
 
 def processInputs( pileFileStr, outID, numProc, parentLabelAr, minCov ):
 	
@@ -110,7 +111,7 @@ def decode( inStr, minCov ):
 		fInd = anyBase.index( x[0] )
 		c = int( x[x.find("(")+1:x.find(")")] )
 		#print( fInd, c )
-		outAr[fInd] = ( 1 if int(c) > minCov else 0 )
+		outAr[fInd] = ( 1 if int(c) >= minCov else 0 )
 	# end for
 	return outAr
 
@@ -156,7 +157,7 @@ def parseInputs( argv ):
 	numProc = NUMPROC
 	parentLabelAr = ['mother', 'father']
 	startInd = 0
-	minCov = 0
+	minCov = MINCOV
 	
 	for i in range(min(5,len(argv)-1)):
 		if argv[i].startswith( '-o=' ):
@@ -180,8 +181,8 @@ def parseInputs( argv ):
 				minCov = int( argv[i][3:] )
 				startInd += 1
 			except ValueError:
-				print( 'WARNING: min coverage must be integer...using 0' )
-				minCov = 0
+				print( 'WARNING: min coverage must be integer...using', MINCOV )
+				minCov = MINCOV
 		elif argv[i].startswith( '-' ):
 			print( 'ERROR: {:s} is not a valid option'.format( argv[i] ) )
 			exit()
@@ -192,6 +193,6 @@ def parseInputs( argv ):
 
 if __name__ == "__main__":
 	if len(sys.argv) < 2 :
-		print ("Usage: python pileup_genotype_pe.py [-o=out_id] [-p=num_proc] [-m=mother_label] [-f=father_label] <decoded_pileup_file> ")
+		print ("Usage: python pileup_genotype_pe.py [-o=out_id] [-p=num_proc] [-m=mother_label] [-f=father_label] [-v-min_cov] <decoded_pileup_file> ")
 	else:
 		parseInputs( sys.argv[1:] )

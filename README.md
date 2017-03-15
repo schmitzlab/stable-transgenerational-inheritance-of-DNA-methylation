@@ -252,16 +252,16 @@ input_file        file of of weighted methylation by position for samples
 Optional:
 -u                uniform class weights [default 1:2:1 for mother,
                   MPV,father]
--d=decode_type    decoding type to use (capitlization ignored) [default A]
+-d=decode_type    decoding type to use (capitalization ignored) [default A]
                   Viterbi="v" or "viterbi"
                   Forward-Backward="forwardbackward", "f" or "fb"
                   Both="all" or "a"
                   Off="false", "none", or "n"
 -o=out_id         identifier for output file [default "out" or variation of
                   input file name]
--p=num_proc       number of processors [default 1
+-p=num_proc       number of processors [default 1]
 -c=bin_thresh     minimum number of features per bin to be classified
-                  groups bins to reach this number [default 3
+                  groups bins to reach this number [default 3]
 -m=mother_label   sample name of mother; for correct classification
                   [default mother]
 -f=father_label   sample name of father; for correct classification
@@ -304,13 +304,38 @@ Optional:
 
 
 ### decode_pileup_pe.py
+Decodes and combines input pileup files into easier to read format
+
+Assumes all input pileup files contain the same positions
+
+In the output file, [A,C,G,T] indicate forward-strand read and [a,c,g,t] indicate reverse-strand read
 
 ```
 Usage: python decode_pileup_pe.py [-o=out_id] [-p=num_proc] <pileup_file> [pileup_file]*
+Required:
+pileup_file    pileup file for a sample; output from samtools pileup
+
+Optional:
+-o=out_id         identifier for output file [default "out"]
+-p=num_proc       number of processors [default 1]
 ```
 
 ### pileup_genotype_pe.py
+Based on the unique nt at each position between mother and father samples, guesses the genotype of the samples. Positions not distinguishable between parents are eliminated.
+
+Input file is output of `decode_pileup_pe.py`
 
 ```
-Usage: python pileup_genotype_pe.py [-o=out_id] [-p=num_proc] [-m=mother_label] [-f=father_label] <decoded_pileup_file>
+Usage: python pileup_genotype_pe.py [-o=out_id] [-p=num_proc] [-m=mother_label] [-f=father_label] [-v-min_cov] <decoded_pileup_file>
+
+Required
+decode_pileup_file    tab-delimited input file; output of decode_pileup_pe.py
+
+Optional:
+-o=out_id         identifier for output file [default variation of
+                  input file name]
+-v=min_cov        min number of reads needed to support genotype [default 1]
+-p=num_proc       number of processors [default 1]
+-m=mother_label   sample name of mother [default mother]
+-f=father_label   sample name of father [default father]
 ```
