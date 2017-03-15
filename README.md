@@ -83,6 +83,7 @@ Optional:
 -f    allC files names listed in the file
 -p=num_proc    number of processors to use [default 1]
 -v=coverage    coverage for each position [default as-is in input]
+```
 
 ## Transgenerational MA lines
 
@@ -189,29 +190,3 @@ Optional:
 -v    include coordinates opposite of what is specified
 
 ```
-
-### weighted_meth_by_pos.py
-
-### decodingpath3.py
-
-### transitions.py
-
-### epigenotyping_pe_combbin_fb-vit_cent.py
-
-### simulation_accuracy.py
-
-### find_crossovers.py
-
-### region_methylation_pe.py
-
-## Epigenotyping compared to SNPs
-
-
-### decode_pileup_pe.py
-
-### pileup_genotype_pe.py
-
-## R Scripts
-
-
-
