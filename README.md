@@ -42,6 +42,7 @@ Combine multiple allC files at basepair level into one allC file
 ```
 Usage: python combine_allc_pe.py [-f] [-p=num_proc] [-o=out_id] [-c=chrm_list | -cf=fasta_index]
 <allc_path> <sample_name> [sample_name]*
+
 Required:
 allc_path      path to allC files
 sample_name    name of sample; used to find allC files
@@ -61,9 +62,11 @@ expects all chromosomes in one allC file
 
 ```
 Usage: python filter_allc_coverage.py [-v=min_cov] <allc_path> <sample1> [sampleN]*
+
 Required:
 allc_path     path to allC files
 sampleN       name of sample; used to find allC files
+
 Optional:
 -v=min_cov    min coverage for positions to include [default 3]
 -p=num_proc   number of processors to use [default 1]
@@ -76,6 +79,7 @@ Output file has same name as input file with "-unmethylated" appended
 
 ```
 Usage: python unmethylate_allc_pe.py [-f] [-p=num_proc] [-v=NA] <allc_file> [allc_file]*
+
 Required:
 allc_file      allC file to unmethylated
                when "-f" set, file with list of allC files
@@ -95,10 +99,12 @@ expects all chromosomes in one allC file and when minCov is set, minCov is outpu
 ```
 Usage: python dmr_gen_counts.py [-o=outID] [-m=methType] [-p=numProc] [-v=min_cov]
  <dmrFile> <allcPath> <sample1> <sample2> [sampleN]*
+
 Required:
 dmrFile     tab-delimited file (BED format) with DMRs to investigate
 allcPath    Path to allC files; all chrms together for each sample
 sample      sample names as part of the allC file
+
 Optional:
 -o=outID       identifier for output file [default "out"]
 -m=methType    methylation type [default C]
@@ -114,8 +120,10 @@ Input file is output from `compare_dmrs_gens_pe.py`
 ```
 Usage: python dmr_gen_switches.py [-wm] [-n=num_c_thresh] [-m=meth_thresh] [-d=length_thresh]
 [-f=fdr] [-o=outID] <in_file>
+
 Required:
 in_file	           tab-delimited file of DMRs and read counts
+
 Optional:
 -wm                methylation threshold is for raw methyl difference 
                    not percent difference
@@ -133,8 +141,10 @@ Converts the switches output of `dmr_gen_switches.py` to BED file
 
 ```
 Usage: python dmr_file_to_bed.py [-v=score_thresh] [-p=name_prefix] [-o=outID] <in_file>
+
 Required:
 in_file            input file of DMRs
+
 Optional:
 -v=score_thresh    min score to include in output [default -1, no threshold]
 -p=name_prefix     prefix for naming features [default None]
@@ -145,11 +155,14 @@ Optional:
 Computes weighted methylation over regions
 
 ```
-Usage: python dmr_counts_pe.py [-o=outID] [-m=methTypes] [-p=numProc] [-v=minCov] <dmrFile> <allcPath>  <sample1> <sample2> [sampleN]*
+Usage: python dmr_counts_pe.py [-o=outID] [-m=methTypes] [-p=numProc] [-v=minCov] <dmrFile>
+<allcPath>  <sample1> <sample2> [sampleN]*
+
 Required:
 dmrFile        tab-delimited file (BED format) with DMRs to investigate
 allcPath       Path to allC files; all chrms together for each sample
 sample         sample names as part of the allC file
+
 Optional:
 -o=outID       identifier for output file [default "out"]
 -m=methType    methylation context to include [default C]
@@ -167,9 +180,11 @@ Uses allC files specific to each chromosome
 ```
 Usage: python find_all_mpos_dif_pe.py [-v=min_cov] [-c=chrm_list] [-o=out_id] [-p=num_proc]
 [-m=meth_types] <allc_path> <sample1_name> <sample2_name>
+
 Required:
 allc_path      path to allc files
 sample_name    names of samples to compare
+
 Optional
 -v=min_cov     min coverage to include a position [default 3]
 -o=out_id      string for output file name [default "out"]
@@ -183,11 +198,13 @@ Filter a list of positions by gene-body methylation and/or CDS
 
 ```
 Usage: python filter_pos_gene_gbm.py [-cds] [-v] <pos_file> <gbm_file> <gff_file>
+
 Required:
 pos_file    position file, tab-delimited BED format, to be filtered
 gbm_file    file with list of gbM genes, one gene per line
             use "none" or "na" to use all genes
 gff_file    GFF formatted file with genes
+
 Optional:
 -cds        use CDS annotation not gene
 -v          include coordinates opposite of what is specified
@@ -196,9 +213,21 @@ Optional:
 ### weighted_meth_by_pos.py
 Compute weighted methylation at each position specified, eliminating positions not covered by minCov reads in all samples
 
+Position list is from `find_all_mpos_dif_pe.py` or `filter_pos_gene_gbm.py`
+
 ```
 Usage: python weighted_meth_by_pos_pe.py [-o=out_id] [-v=min_cov] [-p=num_proc] <pos_list>
 <allc_path> <sample_name> [sample_name]*
+
+Required:
+pos_list       tab-delimited list with chrm and bp position
+allc_path      path to allc files
+sample_name    names of samples to include
+
+Optional:
+-v=min_cov     min coverage to include a position [default 3]
+-o=out_id      string for output file name [default "out"]
+-p=num_proc    num processors to use [default 1]
 ```
 
 ### decodingpath3.py
@@ -216,8 +245,10 @@ Input file is output of `weighted_meth_by_pos_pe.py`
 Usage:
 python epigenotyping_pe_combbin.py [-u] [-c=bin_thresh] [-d=decoding_type][-p=num_proc]
 [-o=out_id] [-m=mother_sample] [-f=father_sample] [-b=bin_size] <input_file>
+
 Required:
 input_file        file of of weighted methylation by position for samples
+
 Optional:
 -u                uniform class weights [default 1:2:1 for mother,
                   MPV,father]
@@ -241,10 +272,12 @@ Optional:
 ### simulation_accuracy.py
 Compute various accuracy scores comparing the assigned epigenotype and predicted epigenotype
 
+Input file is created from R script, columns bin, sample, prediction, test, expected
+
 ```
 Usage: python simulation_accuracy.py [-q] [-o=out_id] <input_file>
 Required:
-input_file    file with expected and predicted epigenotype
+input_file    csv file with expected and predicted epigenotype
 Optional:
 -o=out_id     output identifier
 -q            quiet; don't print progress
@@ -252,8 +285,19 @@ Optional:
 ### find_crossovers.py
 Identify crossovers from an epigenotype map
 
+Input file is output of `epigenotyping_pe_combbin.py`
+
 ```
 Usage: python find_crossovers.py [-c=prediction_column] [-o=out_id] <input_file>
+
+Required:
+input_file    tab delimited file with samples epigenotype per bin
+
+Optional:
+-o=out_id             output identifier [default variation of
+                      input file name
+-c=prediction_column  label of column to use as final epigenotype
+                      [default "vit.prediction"]
 ```
 
 ## Epigenotyping compared to SNPs
