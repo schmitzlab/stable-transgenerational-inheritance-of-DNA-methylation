@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Stable Transgenerational Inheritance of DNA Methylation</title>
+    <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</link>
+    <description>Recent content on Stable Transgenerational Inheritance of DNA Methylation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Released under the MIT license</copyright>
+    <lastBuildDate>Thu, 01 Jun 2017 21:07:13 +0100</lastBuildDate>
+    
+	<atom:link href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Epigenotyping</title>
+      <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</link>
+      <pubDate>Thu, 01 Jun 2017 21:07:13 +0100</pubDate>
+      
+      <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</guid>
+      <description>Information Coming Soon!</description>
+    </item>
+    
+    <item>
+      <title>Getting started</title>
+      <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</link>
+      <pubDate>Wed, 09 Mar 2016 00:11:02 +0100</pubDate>
+      
+      <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</guid>
+      <description> Set Up Installation </description>
+    </item>
+    
+  </channel>
+</rss>
