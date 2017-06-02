@@ -1,30 +1,25 @@
-import sys, math, glob, multiprocessing, subprocess, os
+import sys, math, multiprocessing, subprocess, os
 import numpy as np
 import pandas as pd
 import bth_util
 from sklearn import linear_model
 from functools import partial
-from decodingpath3 import *
+from decodingpath import *
 from transitions import Transitions
 
-# Usage: python epigenotyping_pe_combbin.py [-u] [-c=bin_comb_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_sample] [-f=father_sample] [-b=bin_size] [-t=cent_start,cent_end[,cent2_start,cent2_end]] <input_file>
+# Usage: python epigenotyping_pe_v7.3 [-q] [-n-mpv] [-t-out] [-g=generation]  [-c=bin_comb_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_samples] [-f=father_samples] [-b=bin_size] [-t=cent_start,cent_end[,cent2_start,cent2_end]] <input_file>
 
 NUMPROC=1
 BINSIZE=100000
 DECODE='A'
-UNIFORM=False
+GENERATION=2
+ISPRINT=True
 COMBINE=3
+MPVCHECK=True
+TMOUT=False
 
-def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, isUniform, combineBins, cent ):
-	
-	info = '#from_script: epigenotyping_pe_combbin_fb-vit_cent.py; in_file:{:s}; bin_size:{:s}; decoding:{:s}; uni_class_prob:{:s}; combine_bins_threshold:{:d}; centromere_{:s}'.format( os.path.basename( inFileStr ), bth_util.binSizeToStr( binSize ), formatDecoding( decoding).lower().replace('and',','), str(isUniform).lower(), combineBins, ('None' if cent == None else '{:s}-{:s}'.format( bth_util.binSizeToStr( cent[0] ), bth_util.binSizeToStr( cent[1] ) ) ) )
-	print( 'Weighted methylation file:', os.path.basename( inFileStr ) )
-	print( 'Bin size:', bth_util.binSizeToStr( binSize ) )
-	print( 'Mother label:', parentLabelAr[0] )
-	print( 'Father label:', parentLabelAr[1] )
-	print( 'Uniform classification probabilities:', str(isUniform) )
-	print( 'Decoding algorithm:', formatDecoding( decoding ) )
-	print( 'Combine bin feature threshold:', combineBins )
+def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, generation, combineBins, cent, isPrint, mpvCheck, tmOut ):
+
 	if cent == None:
 		centStr = 'None'
 	else:
@@ -33,15 +28,31 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 			si = i*2
 			centStr += '; {:s}-{:s}'.format( bth_util.binSizeToStr( cent[si] ), bth_util.binSizeToStr( cent[si+1] ) )
 		centStr = centStr[2:]
+	
+	info = '#from_script: epigenotyping_pe_v7.3.py; in_file:{:s}; bin_size:{:s}; decoding:{:s}; generation:{:d}; class_probs:{:s}; combine_bins_threshold:{:d}; centromere:{:s}; mpv_check:{:s}'.format( os.path.basename( inFileStr ), bth_util.binSizeToStr( binSize ), formatDecoding( decoding).lower().replace('and',','), generation, ','.join( formatClassProbs( generation ) ), combineBins, centStr.replace(';', ',').replace(' ',''), str(mpvCheck) )
+	if isPrint:
+		print( 'Weighted methylation file:', os.path.basename( inFileStr ) )
+		print( 'Bin size:', bth_util.binSizeToStr( binSize ) )
+		print( 'Mother label(s):', parentLabelAr[0] )
+		print( 'Father label(s):', parentLabelAr[1] )
+		print( 'Generation:', generation, '({:s})'.format( ','.join(formatClassProbs(generation) ) ) )
+		print( 'MPV bias check:', mpvCheck )
+		print( 'Decoding algorithm:', formatDecoding( decoding ) )
+		print( 'Combine bin feature threshold:', combineBins )
 			
-	print( 'Centromere:', centStr )
+	if isPrint:
+		print( 'Centromere:', centStr )
 	
 	# build dataframe
-	print( ' Reading input file', os.path.basename( inFileStr ) )
+	if isPrint:
+		print( ' Reading input file', os.path.basename( inFileStr ) )
 	df = pd.read_table( inFileStr, header=1 )
 	
 	# check parent labels
-	checkParents( df['sample'], parentLabelAr )
+	newParentLabelAr = checkParents( df['sample'], parentLabelAr )
+	tIgnoreAr = flattenList( newParentLabelAr[:2] )
+	for i in range(len(newParentLabelAr[0])):
+		tIgnoreAr += [ 'MPV{:d}'.format( i ) ]
 	
 	# group by bin
 	df['bin'] = df.pos // binSize
@@ -53,7 +64,6 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 	else:
 		cent = [ x // binSize for x in cent ]
 		centBins = []
-		#centBins = list( range(cent[0], cent[1]+1) )
 		for i in range(len(cent) // 2 ):
 			si = i * 2
 			centBins += list( range(cent[si], cent[si+1]+1) )
@@ -61,7 +71,8 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 	# combine bins if necessary
 	nbins = max(df['bin'])+1
 	if combineBins > 0:
-		print( ' Merging bins', end=' ... ' )
+		if isPrint:
+			print( ' Merging bins', end=' ... ' )
 		df['tBin'] = df['bin']
 		transformation = binTransformation( df, combineBins )
 		# apply the transformation
@@ -69,36 +80,49 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 		
 	
 	dfBinGroup = df.groupby( 'bin' )
+	useBinsCount = nbins
 	if combineBins > 0:
-		newNBins = len(dfBinGroup.groups )
-		print( 'combined {:d} non-functional bins'.format( nbins - newNBins ) )
+		newNBins = len( dfBinGroup.groups )
+		info += '; non-functional_bins:{:d}'.format( nbins - newNBins )
+		if isPrint:
+			print( 'combined {:d} non-functional bins'.format( nbins - newNBins ) )
+		useBinsCount = newNBins
 	
 	# classify by bin
-	print( ' Classifying {:d} bins with {:d} processors'.format( nbins, numProc ) )
-	dfClass = runClassification( dfBinGroup, numProc, parentLabelAr, isUniform )
+	if isPrint:
+		print( ' Classifying {:d} bins with {:d} processors'.format( nbins, numProc ) )
+	# get class probabilities based on generation number
+	classProbs = computeClassProbs( generation )
+	dfClass = runClassification( dfBinGroup, numProc, newParentLabelAr, classProbs )
 	dfClass.reset_index(inplace=True)
-	#print( dfClass.head )
+	
+	# check midparents for single-parent prediction
+	if mpvCheck:
+		dfClass = checkMidparents( dfClass, useBinsCount )
+	
 	del(df, dfBinGroup )
 	# decode, if necessary
 	if decoding != 'N':
-		ignoreAr = parentLabelAr[:2] + ['MPV']
-		transition = Transitions( dfClass, ignore = ignoreAr )
+		transition = Transitions( dfClass, ignore = tIgnoreAr )
 		transitionMatrix = transition.getTransitions()
+		
 		# write this matrix to file
-		#outFStr = determineTransFileName(inFileStr, outID, binSize, combineBins )
-		#tLabels = [ 'mother', 'MPV', 'father' ]
-		#transData = pd.DataFrame( transitionMatrix, index=tLabels, columns= tLabels )
-		#with open( outFStr, 'w' ) as f:
-		#	f.write(info+'\n')
-		#transData.to_csv( outFStr, sep='\t', mode='a' )
+		if tmOut:
+			outFStr = determineTransFileName(inFileStr, outID, binSize, combineBins )
+			tLabels = [ 'mother', 'MPV', 'father' ]
+			transData = pd.DataFrame( transitionMatrix, index=tLabels, columns= tLabels )
+			with open( outFStr, 'w' ) as f:
+				f.write(info+'\n')
+			transData.to_csv( outFStr, sep='\t', mode='a' )
 		
 		# group by sample
 		dfSampleGroup = dfClass.groupby( 'sample' )
 		nsamples = len( dfSampleGroup.groups )
 		tmpDecoding = ( 'F' if decoding == 'B' else decoding )
-		print( ' {:s} decoding {:d} samples with {:d} processors'.format(  formatDecoding(tmpDecoding), nsamples, numProc ) )
+		if isPrint:
+			print( ' {:s} decoding {:d} samples with {:d} processors'.format(  formatDecoding(tmpDecoding), nsamples, numProc ) )
 		
-		dfOutput = runDecoding( dfSampleGroup, numProc, transitionMatrix, tmpDecoding, centBins )
+		dfOutput = runDecoding( dfSampleGroup, numProc, transitionMatrix, tmpDecoding, centBins, classProbs )
 		
 		
 		if decoding == 'B':
@@ -107,15 +131,15 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 			dfNew['mother'] = np.log(dfOutput['fb.score.mother'])
 			dfNew['father'] = np.log(dfOutput['fb.score.father'])
 			dfNew['prediction'] = dfOutput['fb.prediction']
-			#print(dfOutput.head())
-			#print(dfNew.head())
-			transition = Transitions( dfNew, ignore = ignoreAr )
+
+			transition = Transitions( dfNew, ignore = tIgnoreAr )
 			transitionMatrix = transition.getTransitions()
 			dfSampleGroup = dfNew.groupby( 'sample' )
 			nsamples = len( dfSampleGroup.groups )
-		
-			print( ' {:s} decoding {:d} samples with {:d} processors'.format(  formatDecoding('V'), nsamples, numProc ) )
-			dfOutputN = runDecoding( dfSampleGroup, numProc, transitionMatrix, 'V', centBins )
+			
+			if isPrint:
+				print( ' {:s} decoding {:d} samples with {:d} processors'.format(  formatDecoding('V'), nsamples, numProc ) )
+			dfOutputN = runDecoding( dfSampleGroup, numProc, transitionMatrix, 'V', centBins, classProbs )
 			dfOutput[['vit.score.mother', 'vit.score.father', 'vit.score.MPV', 'vit.prob.mother', 'vit.prob.father', 'vit.prob.MPV', 'vit.prediction']] = dfOutputN[['vit.score.mother', 'vit.score.father', 'vit.score.MPV', 'vit.prob.mother', 'vit.prob.father', 'vit.prob.MPV', 'vit.prediction']]
 			#print( dfOutput.head() )
 		# end decoding == B
@@ -125,7 +149,7 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 		dfOutput = dfClass
 	
 	# write output
-	outFileStr = determineOutputFileName( inFileStr, outID, binSize, decoding, isUniform, combineBins )
+	outFileStr = determineOutputFileName( inFileStr, outID, binSize, decoding, generation, combineBins )
 	# if combination, undo transformation by applying the predictions to additional bins
 	if combineBins > 0:
 		dfOutput.reset_index(inplace=True)
@@ -133,12 +157,14 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 		dfOutputT = undoBinTransformation( dfOutput, transformation )
 	else:
 		dfOutputT = dfOutput.drop('cBin', axis=1)
-	print( ' Writing output to', outFileStr )
+	if isPrint:
+		print( ' Writing output to', outFileStr )
 	with open( outFileStr, 'w' ) as f:
 		f.write(info+'\n')
 	dfOutputT.to_csv( outFileStr, sep='\t', mode='a' )
 	
-	print( 'Done' )
+	if isPrint:
+		print( 'Done' )
 
 def formatDecoding( decoding ):
 	if decoding == 'V':
@@ -152,28 +178,60 @@ def formatDecoding( decoding ):
 	else:
 		return 'None'
 
+def computeClassProbs( n ):
+	if n == 0:
+		return None
+	de = math.pow(2, n)
+	nu1 = ( math.pow(2, n-1) ) - 1.0
+	nu2 = 2
+	oAr = [ x / de for x in [nu1, nu2, nu1] ]
+	return oAr
+
+def formatClassProbs (n):
+	iAr = computeClassProbs( n )
+	mAr = [ str(int(x * math.pow(2, n))) for x in iAr ]
+	return mAr
+
 def checkParents( indexAr, parentLabelAr ):
 	'''
 		check parent labels
 	'''
-	#print(indexAr)
-	#exit()
+	outMother = []
+	outFather = []
 	# check mother
-	i = np.where( indexAr == parentLabelAr[0] )
-	if i[0].size == 0:
-		print( 'ERROR: mother label {:s} not found'.format( parentLabelAr[0] ) )
-		exit()
+	mList = parentLabelAr[0].split(',')
+	for motherLabel in mList:
+		i = np.where( indexAr == motherLabel )
+		if i[0].size == 0:
+			print( 'WARNING: mother label {:s} not found..excluding from analysis'.format( motherLabel ) )
+		else:
+			outMother += [ motherLabel ]
 	# check father
-	j = np.where( indexAr == parentLabelAr[1] )
-	if j[0].size == 0:
-		print( 'ERROR: father label {:s} not found'.format( parentLabelAr[1] ) )
+	fList  = parentLabelAr[1].split(',')
+	for fatherLabel in fList:
+		j = np.where( indexAr == fatherLabel )
+		if j[0].size == 0:
+			print( 'WARNING: father label {:s} not found...excluding from analysis'.format( fatherLabel ) )
+		else:
+			outFather += [ fatherLabel ]
+	
+	# final checks
+	if len( outMother ) == 0 or len( outFather ) == 0:
+		print( 'ERROR: did not find samples for mother and/or father' )
 		exit()
+	elif len( outMother ) != len( outFather ):
+		print( 'ERROR: number of mother and father samples not equal' )
+		exit()
+	else:
+		return [outMother, outFather, parentLabelAr[2]]
+
+def flattenList( inputList ):
+	return [ item for sublist in inputList for item in sublist ]
 
 def binTransformation( df, threshold ):
 	# get dataframe for a single sample (it doesn't matter which)
 	
 	testSample = df.ix[0,'sample']
-	#print( testSample )
 	testData = df.loc[ df['sample'] == testSample,: ]
 	testData = testData.copy()
 	# count by bin
@@ -185,13 +243,12 @@ def binTransformation( df, threshold ):
 
 def getTransformation( countData, threshold ):
 	nbins = len(countData)
-	#print(nbins)
 	transform = np.arange(nbins)
 	mCounts = np.array(countData, copy=True)
 	# loop backwards
 	# count how many positions need change
 	pCount = 0
-	for i in range(nbins-1, 0, -1):
+	for i in range(nbins-1, -1, -1):
 		# get count
 		t = mCounts[i]
 		# if there's enough, update transformation array
@@ -206,19 +263,24 @@ def getTransformation( countData, threshold ):
 			pCount += 1
 			mCounts[i-1] += mCounts[i]
 	# end for
+	# handle special case where bin 0 doesn't have enough
+
+	if pCount > 0:
+		for p in range(pCount):
+			transform[p+1] -= p+1
 	return transform
 	
 
-def runClassification( dfg, numProc, parentLabelAr, isUniform ):
+def runClassification( dfg, numProc, parentLabelAr, classProbs ):
 	'''
 		helper function that takes advantage of the number of processors
 	'''
-	mapfunc = partial( classifyBin, pla=parentLabelAr, u=isUniform )
+	mapfunc = partial( classifyBin, pla=parentLabelAr, u=classProbs )
 	with multiprocessing.Pool(processes=numProc) as p:
 		res = p.map( mapfunc, [group for group in dfg] )
 	return pd.concat(res)
 
-def classifyBin( group, pla=None, u=True ):
+def classifyBin( group, pla=None, u=[0.25, 0.5, 0.25] ):
 	'''
 		helper function that makes sure bin number is included in output
 	'''
@@ -230,26 +292,30 @@ def classifyBin( group, pla=None, u=True ):
 	res.set_index( ['bin', 'sample'], inplace=True )
 	return res
 
-def classify( df, parentLabelAr, isUniform ):
+def classify( df, parentLabelAr, classProbs ):
 	# rotate table
 	dfs = df.pivot( index='sample', columns='pos', values='wei.meth' )
 	# number of features used
 	nfeat = dfs.shape[1]
-	dfParent = dfs.loc[ [parentLabelAr[0], parentLabelAr[1]] ]
-	# calculated mid-parent value
-	mpv = dfParent.apply( np.mean, reduce=None )
-	dfs.loc['MPV'] = mpv.transpose()
+	
+	trainLabels = flattenList( parentLabelAr[:2] )
+	nParents = len( parentLabelAr[0] )
+	for i in range( nParents ):
+		dfParent = dfs.loc[ [parentLabelAr[0][i], parentLabelAr[1][i]] ]
+		# calculated mid-parent value
+		mpv = dfParent.apply( np.mean, reduce=None )
+		newLabel = 'MPV{:d}'.format( i )
+		trainLabels += [ newLabel ]
+		dfs.loc[newLabel] = mpv.transpose()
 	
 	# get training data
-	train = dfs.loc[ [parentLabelAr[0], parentLabelAr[1], 'MPV'] ]
+	train = dfs.loc[ trainLabels ]
 	trainClasses = np.array( train.index, dtype=np.str_ )
 	trainClasses = renameParents( trainClasses, parentLabelAr )
 	
 	# create model
-	if isUniform:
-		clf = linear_model.LogisticRegression()
-	else:
-		clf = linear_model.LogisticRegression(class_weight={'mother':0.25,'MPV':0.5,'father':0.25})
+	classWeights = {'mother': classProbs[0], 'MPV': classProbs[1], 'father': classProbs[2]}
+	clf = linear_model.LogisticRegression(class_weight=classWeights)
 	
 	# fit training data
 	clf.fit( train.values, trainClasses )
@@ -265,36 +331,62 @@ def classify( df, parentLabelAr, isUniform ):
 
 def renameParents( inputAr, replaceAr ):
 	replacement = replaceAr[2]
+	nParents = len( replaceAr[0] )
 	# replace mother
 	if replacement == 1 or replacement == 3:
-		i = np.where( inputAr == replaceAr[0] )
-		inputAr[i[0][0]] = 'mother'
+		for j in range( nParents ):
+			i = np.where( inputAr == replaceAr[0][j] )
+			inputAr[i[0][0]] = 'mother'
+	# replace father
 	if replacement == 2 or replacement == 3:
-		i = np.where( inputAr == replaceAr[1] )
-		inputAr[i[0][0]] = 'father'
+		for j in range( nParents ):
+			i = np.where( inputAr == replaceAr[1][j] )
+			inputAr[i[0][0]] = 'father'
+	# replace MPV
+	for j in range( nParents ):
+		i = np.where( inputAr == 'MPV{:d}'.format(j) )
+		inputAr[i[0][0]] = 'MPV'
 	return inputAr
 
-def runDecoding( dfg, numProc, transMat, decodeType, centro ):
-	mapfunc = partial( decodeSample, trans=transMat, d=decodeType, cent=centro )
+def checkMidparents( df, nbins ):
+	
+	#dfM = df.loc[ df['sample'] == 'MPV0' , :]
+	#print( dfM.head() )
+	mpvVals = df.loc[df['sample'] == 'MPV0' ,'prediction'].values
+	#print( mpvVals )
+	im = np.where( mpvVals == 'mother' )
+	ip = np.where( mpvVals == 'father' )
+	if len(im[0]) == nbins:
+		# all predicted to be mother, adjust father
+		df['father'] = np.log( np.exp(df['MPV']) + np.exp(df['father']) )
+		df['MPV'] = 0
+	elif len(ip[0] ) == nbins:
+		# all predicted to be father, adjust mother
+		df['mother'] = np.log( np.exp(df['MPV']) + np.exp(df['mother']) )
+		df['MPV'] = 0
+	return df
+
+def runDecoding( dfg, numProc, transMat, decodeType, centro, classProbs ):
+	mapfunc = partial( decodeSample, trans=transMat, d=decodeType, cent=centro, pi=classProbs )
 	with multiprocessing.Pool(processes=numProc) as p:
 		res = p.map( mapfunc, [group for group in dfg] )
 	return pd.concat(res)
 
-def decodeSample( group, trans=None, d='V', cent=[] ):
+def decodeSample( group, trans=None, d='V', cent=[], pi=None ):
 	name, df = group
 	#print( name )
-	res = decode( df, trans, d, cent )
+	res = decode( df, trans, d, cent, pi )
 	res['sample'] = name
 	return res
 
-def decode( df, transMat, decodeType, cent ):
+def decode( df, transMat, decodeType, cent, pi ):
 	# set up decoding
 	if decodeType == 'A':
-		alg = DecodeAll( df, transMat, cent )
+		alg = DecodeAll( df, transMat, cent, pi )
 	elif decodeType == 'F':
-		alg = DecodeForwardBackward( df, transMat, cent )
+		alg = DecodeForwardBackward( df, transMat, cent, pi )
 	else:
-		alg = DecodeViterbi( df, transMat, cent )
+		alg = DecodeViterbi( df, transMat, cent, pi )
 	# run decoding
 	outdf = alg.run()
 	return outdf
@@ -303,7 +395,6 @@ def undoBinTransformation( df, transformation ):
 	# get new dictionary
 	transDict = undoTransformation( transformation )
 	dfCopy = df.copy()
-	#dfCopy.reset_index(inplace=True)
 	
 	# loop through keys in trans dict
 	for key in transDict.keys():
@@ -351,28 +442,24 @@ def determineTransFileName( inFileStr, outID, binSize, combineBins ):
 		
 		return outFileStr
 
-def determineOutputFileName( inFileStr, outID, binSize, decoding, isUniform, combineBins ):
+def determineOutputFileName( inFileStr, outID, binSize, decoding, generation, combineBins ):
 	outBaseName = os.path.basename( inFileStr )
 	if outID == None:
 		if '_wm_pos_' in inFileStr:
-			outFileStr = outBaseName.replace( '_wm_pos_', '_epigenotype_{:s}_'.format( bth_util.binSizeToStr(binSize) ) )
+			outFileStr = outBaseName.replace( '_wm_pos_', '_epigenotype-v7.3_{:s}_g-{:d}_'.format( bth_util.binSizeToStr(binSize), generation ) )
 		else:
-			outFileStr = 'out_epigenotype_{:s}.tsv'.format( bth_util.binSizeToStr(binSize) )
+			outFileStr = 'out_epigenotype-v7.3_{:s}_g-{:d}.tsv'.format( bth_util.binSizeToStr(binSize), generation )
 	else:
-		outFileStr = '{:s}_epigenotype_{:s}.tsv'.format( outID, bth_util.binSizeToStr(binSize) )
+		outFileStr = '{:s}_epigenotype-v7.3_{:s}_g-{:d}.tsv'.format( outID, bth_util.binSizeToStr(binSize), generation )
 		
 	# combining bins
 	if combineBins > 0:
 		outFileStr = outFileStr.replace('.tsv', '_cb-{:d}.tsv'.format( combineBins ) )
 	
-	# decoding and uniform
-	if decoding != 'N' and isUniform:
-		outFileStr = outFileStr.replace( '.tsv', '_uni-{:s}.tsv'.format( 'vit' if decoding == 'V' else ('fb' if decoding == 'F' else ('both' if decoding == 'B' else 'vit-fb')) ) )
-	elif decoding != 'N':
+	# decoding
+	if decoding != 'N':
 		outFileStr = outFileStr.replace( '.tsv', '_{:s}.tsv'.format( 'vit' if decoding == 'V' else ('fb' if decoding == 'F' else ('both' if decoding == 'B' else 'vit-fb')) ) )
-	elif isUniform:
-		outFileStr = outFileStr.replace( '.tsv', '_uni.tsv' )
-	
+
 	return outFileStr
 	
 def parseInputs( argv ):
@@ -381,12 +468,15 @@ def parseInputs( argv ):
 	outID = None
 	parentLabelAr = ['mother', 'father', 0]
 	decoding = DECODE
-	isUniform = UNIFORM
+	generation = GENERATION
 	combineBins = COMBINE
-	centromere=None
+	mpvCheck = MPVCHECK
+	isPrint = ISPRINT
+	tmOut = TMOUT
+	centromere = None
 	startInd = 0
 	
-	for i in range( min(8, len(argv)-1) ):
+	for i in range( min(11, len(argv)-1) ):
 		if argv[i].startswith( '-o=' ):
 			outID = argv[i][3:]
 			startInd += 1
@@ -400,17 +490,17 @@ def parseInputs( argv ):
 		elif argv[i].startswith( '-p=' ):
 			try:
 				numProc = int( argv[i][3:] )
-				startInd += 1
 			except ValueError:
-				print( 'WARNING: number of processors must be integer...using 1' )
+				print( 'WARNING: number of processors must be integer...using', NUMPROC )
 				numProc = NUMPROC
+			startInd += 1
 		elif argv[i].startswith( '-c=' ):
 			try:
 				combineBins = int( argv[i][3:] )
-				startInd += 1
 			except ValueError:
-				print( 'WARNING: combine bins must be integer...using default {:s}'.format(COMBINE) )
+				print( 'WARNING: combine bins must be integer...using default', COMBINE )
 				combineBins = COMBINE
+			startInd += 1
 		elif argv[i].startswith( '-m=' ):
 			parentLabelAr[0] = argv[i][3:]
 			parentLabelAr[2] += 1
@@ -432,10 +522,23 @@ def parseInputs( argv ):
 			elif opt == 'both' or opt == 'b':
 				decoding = 'B'
 			else:
-				print( 'WARNING: decoding option {:s} not recognized...using default viterbi'.format(opt) )
+				print( 'WARNING: decoding option {:s} not recognized...using default both'.format(opt) )
 			startInd += 1
-		elif argv[i] == '-u':
-			isUniform = True
+		elif argv[i].startswith( '-g=' ):
+			try:
+				generation = int( argv[i][3:] )
+			except ValueError:
+				print( 'WARNING: generation must be integer...using default {:s}'.format(COMBINE) )
+				generation = GENERATION
+			startInd += 1
+		elif argv[i] == '-q':
+			isPrint = False
+			startInd += 1
+		elif argv[i] == '-n-mpv':
+			mpvCheck = False
+			startInd += 1
+		elif argv[i] == '-t-out':
+			tmOut = True
 			startInd += 1
 		elif argv[i].startswith( '-t=' ):
 			tmp = argv[i][3:].split(',')
@@ -454,21 +557,27 @@ def parseInputs( argv ):
 	# end for
 	
 	inFileStr = argv[startInd]
-	processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, isUniform, combineBins, centromere )
+	processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, generation, combineBins, centromere, isPrint, mpvCheck )
 
 def printHelp():
-	print( 'Usage:\npython epigenotyping_pe_combbin.py [-u] [-c=bin_thresh] [-d=decoding_type][-p=num_proc]\n[-o=out_id] [-m=mother_sample] [-f=father_sample] [-b=bin_size] <input_file>' )
+	print( 'Usage:\tpython epigenotyping_pe_v7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]\n\t[-c=bin_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_\n\tsamples][-f=father_samples] [-b=bin_size] [-t=centromere] <input_file>' )
+	print()
 	print( 'Requried:' )
-	print( 'input_file\tfile of of weighted methylation by position for samples' )
+	print( 'input_file\ttab-delimited file of of weighted methylation by position for samples' )
+	print()
 	print( 'Optional:' )
-	print( '-u\t\tuniform class weights [default 1:2:1 for mother,\n\t\tMPV,father]' )
+	print( '-q\t\tquiet; do not print progress' )
+	print( '-n-mpv\t\tdo not check for systematic mid-parent bias' )
+	print( '-t-out\t\twrite transition matrix to file' )
+	print( '-g=generation\tgeneration of self-crossing; used to determine classification\n\t\tprobabilities; use 0 for uniform weight [default {:d}]'.format( GENERATION) )
 	print( '-d=decode_type\tdecoding type to use (capitlization ignored) [default {:s}]\n\t\tViterbi="v" or "viterbi"\n\t\tForward-Backward="forwardbackward", "f" or "fb"\n\t\tBoth="all" or "a"\n\t\tOff="false", "none", or "n"'.format(DECODE) )
 	print( '-o=out_id\tidentifier for output file [default "out" or variation of\n\t\tinput file name]' )
 	print( '-p=num_proc\tnumber of processors [default {:d}'.format(NUMPROC) )
 	print( '-c=bin_thresh\tminimum number of features per bin to be classified\n\t\tgroups bins to reach this number [default {:d}'.format(COMBINE) )
-	print( '-m=mother_label\tsample name of mother; for correct classification\n\t\t[default mother]' )
-	print( '-f=father_label\tsample name of father; for correct classification\n\t\t[default father]' )
+	print( '-m=mother_samples\tcomma-separated sample name(s) of mother\n\t\t[default mother]' )
+	print( '-f=father_samples\tcomma-separated sample name(s) of father\n\t\t[default father]' )
 	print( '-b=bin_size\tsize of bins in bp [default {:s}]'.format( bth_util.binSizeToStr( BINSIZE ) ) )
+	print( '-t=centromere\tcentromere coordinates as "start,end"; can include multipe\n\t\tcentromeres as "start1,end1,start2,end2..." [default None]' )
 	
 if __name__ == "__main__":
 	if len(sys.argv) < 2 :

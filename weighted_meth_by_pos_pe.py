@@ -1,19 +1,26 @@
-import sys, math, glob, multiprocessing, subprocess, os, bisect, random
-from bioFiles import *
+import sys, multiprocessing, subprocess, os, bisect
 
-# Usage: python weighted_meth_by_pos_pe.py [-o=out_id] [-v=min_cov] [-p=num_proc] <pos_list> <allc_path> <sample_name> [sample_name]*
+# Usage: python weighted_meth_by_pos_pe.py [-q] [-o=out_id] [-v=min_cov] [-p=num_proc] <pos_list> <allc_path> <sample_name> [sample_name]*
 # output each row is a sample, each column is a position
 # each chrm gets a file
 
 MINCOV = 3
 NUMPROC = 1
 
-def processInputs( allcPath, posFileStr, sampleNamesAr, outID, minCov, numProc ):
-	print( 'Position file:', os.path.basename( posFileStr ) )
-	print( 'AllC path:', allcPath )
-	print( 'Samples:', ', '.join(sampleNamesAr ) )
-	print( 'Minimum coverage:', minCov )
+def processInputs( allcPath, posFileStr, sampleNamesAr, outID, minCov, numProc, isPrint ):
+
+	if isPrint:
+		print( 'Position file:', os.path.basename( posFileStr ) )
+		print( 'AllC path:', allcPath )
+		print( 'Samples:', ', '.join(sampleNamesAr ) )
+		print( 'Minimum coverage:', minCov )
 	info = '#from_script: weighted_meth_by_pos_pe.py; pos_file: {:s}; samples: {:s}; min_cov: {:d}'.format( os.path.basename( posFileStr ), ','.join( sampleNamesAr ), minCov )
+	
+	# get output file name
+	if outID == None and posFileStr.endswith( 'mpos_diff.tsv' ):
+		outID = os.path.basename( posFileStr ).replace( '_mpos_diff.tsv', '' )
+	else:
+		outID = 'out'
 	# get positions with chrm
 	posDict = getPositions( posFileStr )
 	
@@ -23,14 +30,16 @@ def processInputs( allcPath, posFileStr, sampleNamesAr, outID, minCov, numProc )
 		exit()
 	
 	pool = multiprocessing.Pool( processes=numProc )
-	print( 'Begin processing with', numProc, 'processors' )
+	if isPrint:
+		print( 'Begin processing with', numProc, 'processors' )
 	# loop through chrms
 	for chrm in sorted(posDict.keys()):
-		print( 'Processing', chrm )
+		if isPrint:
+			print( 'Processing', chrm )
 		files = [ os.path.normpath('{:s}/allc_{:s}_{:s}.tsv'.format( allcPath, sample, chrm ) ) for sample in sampleNamesAr ]
 		posAr = posDict[chrm]
 		# multiprocess getting positions from allc files
-		results = [ pool.apply_async(processFile, args=(f, posAr, minCov) ) for f in files ]
+		results = [ pool.apply_async(processFile, args=(f, posAr, minCov, isPrint) ) for f in files ]
 		chrmDictAr = [ p.get() for p in results ]
 		wmMat = []
 		naSet = set()
@@ -41,16 +50,18 @@ def processInputs( allcPath, posFileStr, sampleNamesAr, outID, minCov, numProc )
 		#print( naSet )
 		prevLen = len( posAr )
 		cleanMat, cleanPos = cleanMatrixNA( wmMat, naSet, posAr )
-		#print( posAr[:10] )
-		print( 'Removed', len(naSet), 'low coverage positions:', prevLen, '->', len(cleanPos) )
+		if isPrint:
+			print( 'Removed', len(naSet), 'low coverage positions:', prevLen, '->', len(cleanPos) )
 		# write outputs
 		outFileStr = '{:s}_wm_pos_{:s}.tsv'.format( outID, chrm )
-		print( 'Writing results for', chrm, 'to', outFileStr )
+		if isPrint:
+			print( 'Writing results for', chrm, 'to', outFileStr )
 		writeOutput( outFileStr, cleanMat, cleanPos, sampleNamesAr, info )
 		# clean data structures
 		del( chrmDictAr, files, posAr, wmMat, naSet, cleanMat, cleanPos, results )
 	# end for
-	print( 'Done' )
+	if isPrint:
+		print( 'Done' )
 
 def getPositions( posFileStr ):
 	
@@ -83,22 +94,25 @@ def getPositions( posFileStr ):
 def checkFiles( allcPath, sampleNamesAr, chrmList ):
 	for sample in sampleNamesAr:
 		for chrm in chrmList:
-			if os.path.isfile( os.path.normpath('{:s}/allc_{:s}_{:s}.tsv'.format( allcPath, sample, chrm ) ) ) == False:
+			if os.path.isfile( os.path.normpath('{:s}/allc_{:s}_{:s}.tsv'.format( allcPath, sample, chrm ) ) ) == False and os.path.isfile( os.path.normpath('{:s}/allc_{:s}_{:s}.tsv.gz'.format( allcPath, sample, chrm ) ) ) == False:
 				print( 'ERROR: allC file for sample {:s} chrm {:s} not found'.format( sample, chrm ) )
 				return False
 	return True
 
-def processFile( allcFileStr, posAr, minCov ):
+def processFile( allcFileStr, posAr, minCov, isPrint ):
 	print(' reading {:s}'.format( os.path.basename(allcFileStr) ) )
 	# used to store methylation values
 	wmAr = [-1] * len(posAr)
 	naAr = []
-	allcFile = open( allcFileStr, 'r' )
+	if os.path.isfile( allcFileStr ) == False:
+		allcFile = gzip.open( allcFileStr + '.gz', 'rt' )
+	else:
+		allcFile = open( allcFileStr, 'r' )
 	for line in allcFile:
 		lineAr = line.rstrip().split('\t')
 		# (0) chr (1) pos (2) strand (3) mc class (4) mc_count (5) total
 		# (6) methylated
-		if len(lineAr) < 7 or lineAr[6].isdigit() == False:
+		if len(lineAr) < 6 or lineAr[5].isdigit() == False:
 			continue
 		pos = int( lineAr[1] )
 		i = bisectIndex( posAr, pos )
@@ -146,27 +160,33 @@ def writeOutput( outFileStr, cleanMat, cleanPos, sampleNamesAr, info ):
 def parseInputs( argv ):
 	minCov = MINCOV
 	numProc = NUMPROC
-	outID = 'out'
+	outID = None
+	isPrint = True
 	startInd = 0
 	
-	for i in range(min(3,len(argv))):
+	for i in range(min(4,len(argv))):
 		if argv[i].startswith( '-o=' ):
 			outID = argv[i][3:]
+			startInd += 1
+		elif argv[i] == '-q':
+			isPrint = False
 			startInd += 1
 		elif argv[i].startswith( '-v=' ):
 			try:
 				minCov = int( argv[i][3:] )
 				startInd += 1
 			except ValueError:
-				print( 'ERROR: minimum coverage must be integer' )
-				exit()
+				print( 'WARNING: minimum coverage must be integer...using default', MINCOV )
+				minCov = MINCOV
+				startInd += 1
 		elif argv[i].startswith( '-p=' ):
 			try:
 				numProc = int( argv[i][3:] )
 				startInd += 1
 			except ValueError:
-				print( 'ERROR: number of processors must be integer' )
-				exit()
+				print( 'WARNING: number of processors must be integer...using default', NUMPROC )
+				startInd += 1
+				numProc = NUMPROC
 		elif argv[i] in [ '-h', '--help', '-help']:
 			printHelp()
 			exit()
@@ -180,10 +200,23 @@ def parseInputs( argv ):
 	sampleNamesAr = []
 	for j in range(startInd+2, len(argv)):
 		sampleNamesAr += [ argv[j] ]
-	processInputs( allcPath, posFileStr, sampleNamesAr, outID, minCov, numProc )
+	
+	processInputs( allcPath, posFileStr, sampleNamesAr, outID, minCov, numProc, isPrint )
 
 def printHelp():
-	print ("Usage: python weighted_meth_by_pos_pe.py [-o=out_id] [-v=min_cov] [-p=num_proc] <pos_list> <allc_path> <sample_name> [sample_name]*")
+	print ("Usage:\tpython weighted_meth_by_pos_pe.py [-h] [-q] [-o=out_id] [-v=min_cov]\n\t[-p=num_proc] <pos_list> <allc_path> <sample_name> [sample_name]*")
+	print()
+	print( 'Required:' )
+	print( 'pos_list\ttab-delimited file of chrm and pos to get methylation level' )
+	print( 'allc_path\tpath to allC files' )
+	print( 'sample_name\tnames of samples to get info for' )
+	print()
+	print( 'Optional:' )
+	print( '-h\t\tprint this help screen and exit' )
+	print( '-q\t\tquiet; do not print progress' )
+	print( '-o=out_id\tstring for output file name [default based on input file name\n\t\tor "out"]' )
+	print( '-p=num_proc\tnum processors to use [default {:d}]'.format( NUMPROC ) )
+	print( '-v=min_cov\tmin coverage to include a position [default {:d}]'.format( MINCOV ) )
 
 if __name__ == "__main__":
 	if len(sys.argv) < 4:

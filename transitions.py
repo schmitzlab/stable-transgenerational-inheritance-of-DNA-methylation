@@ -25,8 +25,9 @@ class Transitions:
 		self.countDict = {}
 		for x in self.labels:
 			self.countDict[x] = {}
-			for y in self.labels:
+			for y in self.labels[:-1]:
 				self.countDict[x][y] = 1
+			self.countDict[x]['total'] = len(self.labels) - 1
 			# end for y
 		# end for x
 		self.transMatrix = []

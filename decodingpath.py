@@ -6,7 +6,7 @@ import math
 class DecodePath:
 	''' Base class for decoding types
 	'''
-	def __init__( self, df, transMat, cent ):
+	def __init__( self, df, transMat, cent, pi=None ):
 		# n bins, m states
 		self.labels = np.array( ['mother', 'MPV', 'father'] )
 		self.data = df	# n x m
@@ -15,6 +15,7 @@ class DecodePath:
 		#print('*',self.emissions.dtype)
 		self.states, self.size = self.emissions.shape
 		self.centromere = cent
+		self.pi = ( np.array([1,1,1]) if pi == None else np.array(pi) )
 	
 	def _getEmissions( self, data ):
 		#print(list(data))
@@ -42,6 +43,8 @@ class DecodeViterbi( DecodePath ):
 	def _initializeV( self ):
 		# take log of transitions
 		self.log_transitions = np.log( self.transitions )	# m x m
+		# take log in initial probabilities
+		self.log_pi = np.log( self.pi ) # 1 x m
 		# initialize empty data structures for dynamic programming
 		self.probabilities = np.zeros( (self.size, self.states) )	# n x m
 		self.all_probabilities = np.zeros( (self.size, self.states, self.states ) ) # n x m x m
@@ -63,7 +66,9 @@ class DecodeViterbi( DecodePath ):
 		scores = np.array( [prob]*3 )	# 1 x m
 		for k in range(self.states):
 			if i != 0:
-				scores[k] +=  self.probabilities[i-1,k]
+				scores[k] += self.probabilities[i-1,k]
+			else:
+				scores[k] += self.log_pi[k]
 			scores[k] += self.log_transitions[k,j]
 		# end for k
 		maxS = scores.max()
@@ -128,7 +133,7 @@ class DecodeForwardBackward( DecodePath ):
 		#self.prob_emissions = [ [ math.exp(x) for x in self.emissions[y] ] for y in self.emissions ]
 		# initialize forward and backward dynamic programming structures
 		self.forward = np.zeros( (self.states, self.size+1) ) # m x n+1
-		self.forward[:,0] = 1.0/self.states
+		self.forward[:,0] = self.pi # 1 x m
 		self.backward = np.zeros( (self.states, self.size+1) ) # m x n+1
 		self.backward[:,-1] = 1.0
 		# initialize posterior prob dist
