@@ -1,4 +1,4 @@
-import sys, multiprocessing, subprocess, os, bisect
+import sys, multiprocessing, subprocess, os, bisect, gzip
 
 # Usage: python weighted_meth_by_pos_pe.py [-q] [-o=out_id] [-v=min_cov] [-p=num_proc] <pos_list> <allc_path> <sample_name> [sample_name]*
 # output each row is a sample, each column is a position
@@ -19,7 +19,7 @@ def processInputs( allcPath, posFileStr, sampleNamesAr, outID, minCov, numProc, 
 	# get output file name
 	if outID == None and posFileStr.endswith( 'mpos_diff.tsv' ):
 		outID = os.path.basename( posFileStr ).replace( '_mpos_diff.tsv', '' )
-	else:
+	elif outID == None:
 		outID = 'out'
 	# get positions with chrm
 	posDict = getPositions( posFileStr )
