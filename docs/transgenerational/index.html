@@ -9,18 +9,18 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
     <meta http-equiv="X-UA-Compatible" content="IE=10" />
-    <title>Getting started - Inheritance of DNA Methylation</title>
+    <title>Transgenerational Inheritance - Inheritance of DNA Methylation</title>
     <meta name="generator" content="Hugo 0.21" />
 
     
     <meta name="description" content="Epigenotyping">
     
-    <link rel="canonical" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/">
+    <link rel="canonical" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/">
     
     <meta name="author" content="Brigitte Hofmeister">
     
 
-    <meta property="og:url" content="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/">
+    <meta property="og:url" content="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/">
     <meta property="og:title" content="Inheritance of DNA Methylation">
     
     <meta name="apple-mobile-web-app-title" content="Inheritance of DNA Methylation">
@@ -99,7 +99,7 @@
     </div>
     <div class="stretch">
       <div class="title">
-        Getting started
+        Transgenerational Inheritance
       </div>
     </div>
 
@@ -193,14 +193,11 @@
 
 
 
-<a class="current" title="Getting started" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/">
+<a  title="Getting started" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/">
 	
 	Getting started
 </a>
 
-
-<ul id="scrollspy">
-</ul>
 
 
   
@@ -214,11 +211,14 @@
 
 
 
-<a  title="Transgeneration inheritance" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/">
+<a class="current" title="Transgeneration inheritance" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/">
 	
 	Transgeneration inheritance
 </a>
 
+
+<ul id="scrollspy">
+</ul>
 
 
   
@@ -285,53 +285,99 @@
 
 	<article class="article">
 		<div class="wrapper">
-			<h1>Getting started </h1>
+			<h1>Transgenerational Inheritance </h1>
 
 			
 
-<h2 id="installation">Installation</h2>
+<p><strong>Sample data is not provided for this topic.</strong>
+For illustrative purposes, assume that three generations of line &ldquo;A&rdquo; are available and they are named &ldquo;A-1&rdquo;, &ldquo;A-2&rdquo;, &ldquo;A-3&rdquo;. This species only has two chromosomes, &ldquo;Chr1&rdquo; and &ldquo;Chr2&rdquo;.</p>
 
-<p>To install, either clone this repositiory or download the source code.</p>
+<h2 id="beginnings">Beginnings</h2>
 
-<pre><code>    # Using git clone
-    git clone https://github.com/schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation.git
+<h3 id="set-up-requirements">Set up requirements</h3>
+
+<ul>
+<li>All samples have allC files.
+
+<ul>
+<li>AllC file are tab-delimited.</li>
+<li>They have the following columns
+
+<ul>
+<li>Chromosome</li>
+<li>Position (1-indexed)</li>
+<li>Strand (+ or -)</li>
+<li>Context (3 bp sequence)</li>
+<li>Number methylated reads</li>
+<li>Number total reads</li>
+<li>Is the position methylated? (1 for yes)</li>
+</ul></li>
+</ul></li>
+<li>All of the allC files are named as &ldquo;allc_samplename_chromosome.tsv&rdquo; or &ldquo;allc_samplename.tsv&rdquo;.</li>
+<li>Many of the following scripts expect a single allC file per sample. In this case, the file is named &ldquo;allc_samplename.tsv&rdquo;. Create this file using <code>cat allc_samplename_*.tsv &gt; allc_samplename.tsv</code>.</li>
+<li>All of the allC files are in one directory.</li>
+</ul>
+
+<h2 id="identification-of-methylated-regions">Identification of Methylated Regions</h2>
+
+<h3 id="step-1-combine-samples-allc-files">Step 1: Combine samples allC files</h3>
+
+<p>We combine the information from all samples in a line to form a &ldquo;pan-methylome&rdquo;. To do this, we sum up the number of methylated and number of total reads at each position across all samples and write the results to a new allC file.</p>
+
+<p>For example run, <a href="appendix/#combine-allc-pe-py">combine_allc_pe.py</a></p>
+
+<pre><code>    python combine_allc_pe.py -o=lineA-pan-methylome -c=Chr1,Chr2 allc_path A-1 A-2 A-3
 </code></pre>
 
-<h2 id="set-up">Set-Up</h2>
+<p>This creates two files (one for each chromosome) <em>allc_lineA-pan-methylome_Chr1.tsv</em> and <em>allc_lineA-pan-methylome_Chr2.tsv</em>.</p>
 
-<p>All python scripts were created for Phyton 3.4+ and specifically tested with Python 3.5.2. All scripts import <code>sys</code> and <code>os</code>. Many import <code>math</code>, <code>glob</code>, <code>bisect</code>, and <code>random</code>. Several import <code>pandas</code>, <code>numpy</code>, <code>scipy</code>, <code>functools</code>, and <code>sklearn</code>. Any script ending in <code>_pe.py</code> has the ability to be run using multiple processors and imports <code>multiprocessing</code> and <code>subprocess</code>. See <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix">appendix</a> to determine which scripts need which packages</p>
+<h3 id="step-2-unmethylate-the-pan-methylome">Step 2: Unmethylate the pan-methylome</h3>
 
-<p>All required imports, as well as Python itself, are available via <a href="https://www.continuum.io/downloads">anaconda</a>. This the preferred way to install package dependencies. See anaconda for instructions on how to install and how to download required packages.</p>
+<p>We are trying to identify all methylated regions, so we want to create a null, unmethylated genome to compare it against.</p>
 
-<h2 id="software-versions">Software Versions</h2>
+<pre><code>    python unmethylate_allc_pe.py allc_lineA-pan-methylome_Chr1.tsv allc_lineA-pan-methylome_Chr2.tsv
+</code></pre>
 
-<p>Listed below are the software versions used for analysis in the paper.</p>
+<p>This creates two files (one for each input): <em>allc_lineA-pan-methylome-unmethylated_Chr1.tsv</em> and <em>allc_lineA-pan-methylome-unmethylated_Chr2.tsv</em></p>
 
-<ul>
-<li>Python: 3.5.2</li>
-<li>Anaconda: 4.1.6
+<h3 id="step-3-dmr-analysis">Step 3: DMR analysis</h3>
 
-<ul>
-<li>Numpy: 1.11.0</li>
-<li>Scipy: 0.17.1</li>
-<li>Scikit: 0.17.1</li>
-<li>Pandas: 0.17.0</li>
-</ul></li>
-</ul>
+<p>Using your prefer DMR analysis tool, you can compare the pan-methylome and unmethylated pan-methylome to identify methylated regions of the genome. Parameters and filters should be the same for this analysis as used for between-samples DMR analysis.</p>
 
-<p>Most scripts should work with other versions, but it is not guaranteed. Scripts will *<em>not</em>
-* work for Python2.</p>
+<h2 id="epiallele-identification">Epiallele Identification</h2>
 
-<h2 id="required-scripts">Required Scripts</h2>
+<h3 id="step-1-putative-dmr-list">Step 1: Putative DMR list</h3>
 
-<p>These scripts are required by several of the other scripts and contain utility functions. These must be in the same folder as the other scripts or on the python path.</p>
+<p>Using the preferred DMR analysis tool, identify DMRs between all samples in a line. Depending on the program, this DMR list should be filtered for length, methylation change, ect.
+After filtering, we have a set of putative epialleles. For illustrative purposes, these regions are saved in a file named <em>dmr_list.tsv</em>.</p>
 
-<p>To add to python path, <code>export PYTHONPATH=$PYTHONPATH:/path/to/scripts</code>.</p>
+<h3 id="step-2-coverage-filters">Step 2: Coverage filters</h3>
 
-<ul>
-<li><em>bioFiles.py</em>: for reading common file types</li>
-<li><em>bth_util.py</em>: extra utility functions such as converting an integer to a human-readable size</li>
-</ul>
+<p>Many of the scripts in this analysis accept an optional minimum coverage parameter which only keeps positions with sufficient coverage in all samples. We apply this minimum coverage to minimize methylation variation of a region/sample due to missing information.</p>
+
+<p>To save computational time later, we will create a new allC file for each sample which only includes positions with sufficient coverage. This eliminates needing to apply this filter repetitively.</p>
+
+<p>For example, run <a href="appendix/#filter-allc-coverage-pe-py">filter_allc_coverage_pe.py</a> to with minimum coverage 2. This script expects all chromosomes in one allC file.</p>
+
+<pre><code>    python filter_allc_coverage_pe.py -v=2 allc_path A-1 A-2 A-3
+</code></pre>
+
+<p>This creates files <em>allc_A-1_cov2.tsv</em>, <em>allc_A-2_cov2.tsv</em>, and <em>allc_A-3_cov2.tsv</em>.</p>
+
+<h3 id="step-3-between-generation-comparison">Step 3: Between generation comparison</h3>
+
+<p>With the DMR list, we want to get the number of methylated and unmethylated reads for each region and compare adjacent generations. First, we will get the read counts for organized by each comparison. When specifying samples, <strong>order matters</strong>.</p>
+
+<p>To allow for fair comparsion between samples, we want to use positions which have sufficient coverage in all samples. So we use the coverage allC files created in Step 2. In this script, the coverage parameter is used to search for files named as <code>allc_samplename_cov#.tsv</code>, which includes all chromosomes.</p>
+
+<p>Run <a href="appendix/#dmr-gen-counts-py">dmr_gen_counts.py</a> for minimum coverage 2.</p>
+
+<pre><code>    python dmr_gen_counts.py -v=2 dmr_list.tsv allc_path A-1 A-2 A-3
+</code></pre>
+
+<p>This creates file **.</p>
+
+<h3 id="step-4-identify-signficant-dmrs">Step 4. Identify signficant DMRs</h3>
 
 
 			<aside class="copyright" role="note">
@@ -350,7 +396,7 @@
 <nav class="pagination" aria-label="Footer">
   <div class="previous">
   
-      <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/" title="Home">
+      <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/" title="Getting started">
         <span class="direction">
           Previous
         </span>
@@ -360,7 +406,7 @@
           </div>
           <div class="stretch">
             <div class="title">
-              Home
+              Getting started
             </div>
           </div>
         </div>
@@ -370,14 +416,14 @@
 
   <div class="next">
   
-      <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/" title="Transgenerational Inheritance">
+      <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/" title="Epigenotyping">
         <span class="direction">
           Next
         </span>
         <div class="page">
           <div class="stretch">
             <div class="title">
-              Transgenerational Inheritance
+              Epigenotyping
             </div>
           </div>
           <div class="button button-next" role="button" aria-label="Next">

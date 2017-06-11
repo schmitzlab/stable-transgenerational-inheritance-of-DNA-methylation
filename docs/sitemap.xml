@@ -9,11 +9,53 @@
   
   <url>
     <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</loc>
-    <lastmod>2016-03-09T00:11:02+01:00</lastmod>
+    <lastmod>2017-06-02T00:11:02+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/categories/</loc>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/</loc>
+    <lastmod>2017-06-02T00:11:02+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/</loc>
+    <lastmod>2017-06-02T00:11:02+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/</loc>
+    <lastmod>2017-06-02T00:11:02+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</loc>
+    <priority>0</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/"
+                />
+  </url>
+  
+  <url>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</loc>
+    <priority>0</priority>
+    <xhtml:link
+                rel="alternate"
+                hreflang="en"
+                href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/"
+                />
+  </url>
+  
+  <url>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/</loc>
+    <lastmod>2017-06-02T00:11:02+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</loc>
+    <lastmod>2017-06-02T00:11:02+01:00</lastmod>
     <priority>0</priority>
   </url>
   
@@ -24,7 +66,8 @@
   </url>
   
   <url>
-    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/tags/</loc>
+    <loc>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/</loc>
+    <lastmod>2017-06-02T00:11:02+01:00</lastmod>
     <priority>0</priority>
   </url>
   
