@@ -1,0 +1,18 @@
+#from_script: pileup_genotype_pe.py; mother_label: mother-sample; father_label: father-sample; min_cov_samples: 1; input_files: snp-info_decoded_pileup.tsv
+chrm	pos	sample	pileup	genotype
+Chr1	1947646	no-difference-between-parents
+Chr1	3150227	no-difference-between-parents
+Chr1	6357120	F2-1	A(1) G(2) a(7)	heterozygous
+Chr1	6357120	F2-2	G(11) a(6)	father
+Chr1	6357120	F2-3	G(12) a(5)	father
+Chr1	6357120	F2-4	A(8) a(3)	mother
+Chr1	6357120	F2-5	A(5) G(7) a(6)	heterozygous
+Chr1	6357120	mother-sample	A(13) a(9)	mother
+Chr1	6357120	father-sample	G(13) a(10)	father
+Chr1	7231264	F2-1	T(9) t(11)	mother
+Chr1	7231264	F2-2	G(20) a(11)	NA
+Chr1	7231264	F2-3	G(22) a(14)	NA
+Chr1	7231264	F2-4	T(15) t(9)	mother
+Chr1	7231264	F2-5	G(5) T(16) a(8) t(6)	mother
+Chr1	7231264	mother-sample	G(9) T(9) a(6) t(5)	mother
+Chr1	7231264	father-sample	G(17) a(10)	NA
