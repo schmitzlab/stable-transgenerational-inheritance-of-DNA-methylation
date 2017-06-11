@@ -1,4 +1,7 @@
+**For additional information, including a tutorial and sample data for the epigenotyping procedure, check out the [updated documentation](https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/).**
+
 # Scripts used in the paper Stable Transgenerational Inheritance of DNA methylation
+
 
 ## Set up
 
