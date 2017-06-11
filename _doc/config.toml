@@ -1,8 +1,8 @@
 baseurl = "https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/"
 languageCode = "en-us"
-title = "Stable Transgenerational Inheritance of DNA Methylation"
+title = "Inheritance of DNA Methylation"
 theme = "hugo-material-docs"
-metadataformat = "yaml"
+metadataformat = "toml"
 canonifyurls = true
 publishDir = "../docs"
 # Enable Google Analytics by entering your tracking id
@@ -18,22 +18,22 @@ googleAnalytics = ""
 	provider = "GitHub"
 	repo_url = "https://github.com/schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation"
 
-	version = "1.0.0"
-	logo = "i"
+	version = ""
+	logo = ""
 	favicon = ""
 
 	permalink = "#"
 
 	# Custom assets
-	custom_css = []
+	custom_css = ["custom.css"]
 	custom_js  = []
 
 	# Syntax highlighting theme
 	highlight_css  = ""
 
 	[params.palette]
-    	primary = "grey"
-    	accent  = "light-green"
+    	primary = "cyan"
+    	accent  = "red"
 
     [params.font]
     	text = "Roboto"
@@ -47,18 +47,36 @@ googleAnalytics = ""
 
 
 [[menu.main]]
-	name   = "Epigenotyping"
+	name   = "Home"
 	url    = "/"
 	weight = 10
 
 [[menu.main]]
 	name   = "Getting started"
-	url    = "/getting-started"
+	url    = "getting-started/"
 	weight = 20
+    
+[[menu.main]]
+    name    = "Transgeneration inheritance"
+    url     = "transgenerational/"
+    weight  = 30
 
+[[menu.main]]
+	name   = "Epigenotyping"
+	url    = "epigenotyping/"
+	weight = 40
+    
+[[menu.main]]
+	name   = "Appendix"
+	url    = "/appendix"
+	weight = 50
 
 [blackfriday]
 	smartypants	= true
 	fractions = true
 	smartDashes = true
 	plainIDAnchors = true
+
+[taxonomies]
+    tag = ""
+    category = ""

@@ -1,0 +1,15 @@
+li.repo-stars{
+    display: none;
+}
+
+.article code{
+    font-size: smaller;
+}
+
+.article h2{
+    text-transform: uppercase;
+}
+
+.article h3{
+    font-size: 16px;
+}
