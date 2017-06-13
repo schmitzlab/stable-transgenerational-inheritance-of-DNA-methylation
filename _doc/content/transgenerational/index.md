@@ -29,7 +29,7 @@ For illustrative purposes, assume that three generations of line "A" are availab
 ### Step 1: Combine samples allC files
 We combine the information from all samples in a line to form a "pan-methylome". To do this, we sum up the number of methylated and number of total reads at each position across all samples and write the results to a new allC file.
 
-For example run, [combine_allc_pe.py](appendix/#combine-allc-pe-py)
+For example run, [combine_allc_pe.py](/appendix/#combine-allc-pe-py)
 
 ```bash
 python combine_allc_pe.py -o=lineA-pan-methylome -c=Chr1,Chr2 allc_path A-1 A-2 A-3
@@ -62,7 +62,7 @@ Many of the scripts in this analysis accept an optional minimum coverage paramet
 
 To save computational time later, we will create a new allC file for each sample which only includes positions with sufficient coverage. This eliminates needing to apply this filter repetitively.
 
-For example, run [filter_allc_coverage_pe.py](appendix/#filter-allc-coverage-pe-py) to with minimum coverage 2. This script expects all chromosomes in one allC file.
+For example, run [filter_allc_coverage_pe.py](/appendix/#filter-allc-coverage-pe-py) to with minimum coverage 2. This script expects all chromosomes in one allC file.
 
 ```bash
 python filter_allc_coverage_pe.py -v=2 allc_path A-1 A-2 A-3
@@ -76,7 +76,7 @@ With the DMR list, we want to get the number of methylated and unmethylated read
 
 To allow for fair comparsion between samples, we want to use positions which have sufficient coverage in all samples. So we use the coverage allC files created in Step 2. In this script, the coverage parameter is used to search for files named as `allc_samplename_cov#.tsv`, which includes all chromosomes.
 
-Run [dmr_gen_counts_pe.py](appendix/#dmr-gen-counts-pe-py) for minimum coverage 2.
+Run [dmr_gen_counts_pe.py](/appendix/#dmr-gen-counts-pe-py) for minimum coverage 2.
 
 ```bash
 python dmr_gen_counts_pe.py -v=2 dmr_list.tsv allc_path A-1 A-2 A-3
@@ -94,7 +94,7 @@ Also includes parameters to set minimum length of region and minimum number of c
 
 This script uses the output of Step 3, *out_dmr-gen_c.tsv*.
 
-Run [dmr_gen_ztesting.py](appendix/#dmr-gen-ztesting-py) to test for methylation level change of 25%
+Run [dmr_gen_ztesting.py](/appendix/#dmr-gen-ztesting-py) to test for methylation level change of 25%
 
 ```bash
 python dmr_gen_ztesting.py -wm -m=0.25 out_dmr-gen_c.tsv
@@ -106,7 +106,7 @@ This creates three files: *out_dmr-gen_c_full.tsv* (full set of statistics for i
 
 Now, we use the output of Step 4 (*out_dmr-gen_C_switches.tsv*) to create a BED file of the DMRs. Score parameter filters based on the number of switches.
 
-Run [dmr_file_to_bed.py](appendix/#dmr-file-to-bed-py) to get all regions with at least one switch
+Run [dmr_file_to_bed.py](/appendix/#dmr-file-to-bed-py) to get all regions with at least one switch
 
 ```bash
 python dmr_file_to_bed.py -v=1 out_dmr-gen_c_switches.tsv

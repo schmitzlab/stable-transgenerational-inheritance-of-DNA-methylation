@@ -324,7 +324,7 @@ For illustrative purposes, assume that three generations of line &ldquo;A&rdquo;
 
 <p>We combine the information from all samples in a line to form a &ldquo;pan-methylome&rdquo;. To do this, we sum up the number of methylated and number of total reads at each position across all samples and write the results to a new allC file.</p>
 
-<p>For example run, <a href="appendix/#combine-allc-pe-py">combine_allc_pe.py</a></p>
+<p>For example run, <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#combine-allc-pe-py">combine_allc_pe.py</a></p>
 
 <pre><code class="language-bash">python combine_allc_pe.py -o=lineA-pan-methylome -c=Chr1,Chr2 allc_path A-1 A-2 A-3
 </code></pre>
@@ -357,7 +357,7 @@ After filtering, we have a set of putative epialleles. For illustrative purposes
 
 <p>To save computational time later, we will create a new allC file for each sample which only includes positions with sufficient coverage. This eliminates needing to apply this filter repetitively.</p>
 
-<p>For example, run <a href="appendix/#filter-allc-coverage-pe-py">filter_allc_coverage_pe.py</a> to with minimum coverage 2. This script expects all chromosomes in one allC file.</p>
+<p>For example, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#filter-allc-coverage-pe-py">filter_allc_coverage_pe.py</a> to with minimum coverage 2. This script expects all chromosomes in one allC file.</p>
 
 <pre><code class="language-bash">python filter_allc_coverage_pe.py -v=2 allc_path A-1 A-2 A-3
 </code></pre>
@@ -370,7 +370,7 @@ After filtering, we have a set of putative epialleles. For illustrative purposes
 
 <p>To allow for fair comparsion between samples, we want to use positions which have sufficient coverage in all samples. So we use the coverage allC files created in Step 2. In this script, the coverage parameter is used to search for files named as <code>allc_samplename_cov#.tsv</code>, which includes all chromosomes.</p>
 
-<p>Run <a href="appendix/#dmr-gen-counts-pe-py">dmr_gen_counts_pe.py</a> for minimum coverage 2.</p>
+<p>Run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#dmr-gen-counts-pe-py">dmr_gen_counts_pe.py</a> for minimum coverage 2.</p>
 
 <pre><code class="language-bash">python dmr_gen_counts_pe.py -v=2 dmr_list.tsv allc_path A-1 A-2 A-3
 </code></pre>
@@ -387,7 +387,7 @@ Also includes parameters to set minimum length of region and minimum number of c
 
 <p>This script uses the output of Step 3, <em>out_dmr-gen_c.tsv</em>.</p>
 
-<p>Run <a href="appendix/#dmr-gen-ztesting-py">dmr_gen_ztesting.py</a> to test for methylation level change of 25%</p>
+<p>Run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#dmr-gen-ztesting-py">dmr_gen_ztesting.py</a> to test for methylation level change of 25%</p>
 
 <pre><code class="language-bash">python dmr_gen_ztesting.py -wm -m=0.25 out_dmr-gen_c.tsv
 </code></pre>
@@ -398,7 +398,7 @@ Also includes parameters to set minimum length of region and minimum number of c
 
 <p>Now, we use the output of Step 4 (<em>out_dmr-gen_C_switches.tsv</em>) to create a BED file of the DMRs. Score parameter filters based on the number of switches.</p>
 
-<p>Run <a href="appendix/#dmr-file-to-bed-py">dmr_file_to_bed.py</a> to get all regions with at least one switch</p>
+<p>Run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#dmr-file-to-bed-py">dmr_file_to_bed.py</a> to get all regions with at least one switch</p>
 
 <pre><code class="language-bash">python dmr_file_to_bed.py -v=1 out_dmr-gen_c_switches.tsv
 </code></pre>
