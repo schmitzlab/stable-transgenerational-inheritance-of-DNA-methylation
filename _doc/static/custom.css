@@ -13,3 +13,14 @@ li.repo-stars{
 .article h3{
     font-size: 16px;
 }
+
+.article li, .article li ol, .article li ul, .article ul{
+    margin-top: 0px;
+}
+
+@media only screen and (min-width: 1200px){
+    .drawer .scrollable .wrapper hr{
+        width: 100%;
+    }
+
+}

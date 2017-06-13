@@ -32,9 +32,9 @@ Note that low-covered positions are considered "unmethylated", so the coverage p
 
 In the *sample_data* folder, run [find_mpos_diff_pe.py](/appendix/#find-mpos-diff-pe-py)
 
-```
-    python ../scripts/find_mpos_diff_pe.py -v=3 -c=Chr1 -o=sample-data allc_files \
-    mother-sample father-sample
+```bash
+python ../scripts/find_mpos_diff_pe.py -v=3 -c=Chr1 -o=sample-data allc_files \
+mother-sample father-sample
 ```
 
 This will create a file named *sample-data_mpos_diff.tsv*.
@@ -51,14 +51,14 @@ The `-v` option selects opposite of genes/subset. If no gene subset is given `-v
 
 Data in not included but could be run. In the *sample_data* folder, run [filter_pos_gene_subset.py](/appendix/#filter-pos-gene-subset-py)
 
-```
-    python ../scripts/filter_pos_gene_subset.py sample-data_mpos_diff.tsv <subset_file> <gff_file>
+```bash
+python ../scripts/filter_pos_gene_subset.py sample-data_mpos_diff.tsv <subset_file> <gff_file>
 ```
 
 Output (*sample-data_mpos_diff_subset_gene.tsv*) would have all positions in of entire gene body of genes listed in subset file.
 
-```
-    python ../scripts/filter_pos_gene_subset.py -v sample-data_mpos_diff.tsv na <gff_file>
+```bash
+python ../scripts/filter_pos_gene_subset.py -v sample-data_mpos_diff.tsv na <gff_file>
 ```
 Output (*sample-data_mpos_diff_nongenes_gene.tsv*) would have all non-genic positions.
 
@@ -67,9 +67,9 @@ Once we have the informative positions, we need the methylation level of all sam
 
 In the *sample_data* folder, run [weighted_meth_by_pos_pe.py](/appendix/#weighted-meth-by-pos-pe-py)
 
-```
-    python ../scripts/weighted_meth_by_pos_pe.py -v=3 sample-data_mpos_diff.tsv \
-    allc_files mother-sample father-sample F2-1 F2-2 F2-3 F2-4 F2-5
+```bash
+python ../scripts/weighted_meth_by_pos_pe.py -v=3 sample-data_mpos_diff.tsv \
+allc_files mother-sample father-sample F2-1 F2-2 F2-3 F2-4 F2-5
 ```
 
 This will create a file named *sample-data_wm_pos_Chr1.tsv*.
@@ -83,9 +83,9 @@ This is the main script. It accepts several parameters. Defaults were chosen for
 
 In the *sample_data* folder, run [epigenotyping_pe_v7.3.py](/appendix/#epigenotyping-pe-v7-3-py)
 
-```
-    python ../scripts/epigenotyping_pe_v7.3.py -g=2 -b=50kb -c=3 -t=3300kb,6300kb \
-    -m=mother-sample -f=father-sample sample-data_wm_pos_Chr1.tsv
+```bash
+python ../scripts/epigenotyping_pe_v7.3.py -g=2 -b=50kb -c=3 -t=3300kb,6300kb \
+-m=mother-sample -f=father-sample sample-data_wm_pos_Chr1.tsv
 ```
 
 This will create a file name *sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv*
@@ -98,8 +98,8 @@ Once you have an epigenotype map, you can get approximate crossover locations an
 
 In the *sample_data* folder, run [find_crossovers.py](/appendix/#find-crossovers-py)
 
-```
-    python ../scripts/find_crossovers.py sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv
+```bash
+python ../scripts/find_crossovers.py sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv
 ```
 
 This will create two files: *sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_count.tsv* (number of breakpoints per sample) and *sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_pos.tsv* (location of breakpoints)
@@ -113,8 +113,8 @@ If SNP information is available, it is possible to use WGBS to to verify the epi
 
 This is require a BAM file of the mapped reads and a BED formatted file of SNP locations then running [Samtools](http://www.htslib.org/doc/samtools-1.2.html) mpileup getting the reads at the SNP locations. Remember, BED files are 0-based and half-open (start position is included, end position not). If the SNP occurs at 1-based position *x*, the BEC file coordinates would be *x-1, x*.
 
-```
-    samtools mpileup -l bed_file bam_file > out.txt
+```bash
+samtools mpileup -l bed_file bam_file > out.txt
 ```
 
 BAM files are not included in the sample data due to file size. Pileup files are available in *sample_data/pileup_files*.
@@ -127,10 +127,10 @@ If interested, `.` stands for a match to the reference on the forward strand, `,
 
 In *sample_data*, run [decode_pileup_pe.py](/appendix/#decode-pileup-pe-py),
 
-```
-    python ../scripts/decode_pileup_pe.py -o=snp-info pileup_files/F2-1_pileup.txt \
-    pileup_files/F2-2_pileup.txt pileup_files/F2-3_pileup.txt pileup_files/F2-4_pileup.txt \
-    pileup_files/F2-5_pileup.txt pileup_files/mother-sample_pileup.txt pileup_files/father-sample_pileup.txt
+```bash
+python ../scripts/decode_pileup_pe.py -o=snp-info pileup_files/F2-1_pileup.txt \
+pileup_files/F2-2_pileup.txt pileup_files/F2-3_pileup.txt pileup_files/F2-4_pileup.txt \
+pileup_files/F2-5_pileup.txt pileup_files/mother-sample_pileup.txt pileup_files/father-sample_pileup.txt
 ```
 
 This will output *snp-info_decoded_pileup.tsv*.
@@ -145,9 +145,9 @@ For example, if the mother sample has reads supporting "A" and "c" and the fathe
 
 In the *sample_data* folder, run [pileup_genotype_pe.py](/appendix/#pileup-genotype-pe-py),
 
-```
-    python ../scripts/pileup_genotype_pe.py -m=mother-sample -f=father-sample \
-    snp-info_decoded_pileup.tsv
+```bash
+python ../scripts/pileup_genotype_pe.py -m=mother-sample -f=father-sample \
+snp-info_decoded_pileup.tsv
 ```
 
 This creates output file *snp-info_decode_pileup_genotyped.tsv*.

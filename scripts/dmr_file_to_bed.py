@@ -1,14 +1,16 @@
-import sys, math, glob, multiprocessing, subprocess, os, bisect, random
+import sys, os
 
 # Usage: python dmr_file_to_bed.py [-v=score_thresh] [-p=name_prefix] [-o=outID] <in_file>
 
-def processInputs( inFileStr, minScore, namePre, outID ):
-	# get outID if necessary
+MINSCORE=-1
+
+def processInputs( inFileStr, minScore, namePre, outID, isPrint ):
 	
 	bname = os.path.basename( inFileStr )
-	print( 'Input file:', bname )
-	print( 'Score threshold:', minScore )
-	print( 'Name prefix:', namePre )
+	if isPrint:
+		print( 'Input file:', bname )
+		print( 'Score threshold:', minScore )
+		print( 'Name prefix:', namePre )
 	if outID == None:
 		ffind = bname.rfind('.tsv' )
 		if ffind != -1:
@@ -16,10 +18,12 @@ def processInputs( inFileStr, minScore, namePre, outID ):
 		else:
 			outID = bname
 	outFileStr = outID + '.bed'
-	print( 'Output file:', outFileStr )
-	print( 'Converting' )
+	if isPrint:
+		print( 'Output file:', outFileStr )
+		print( 'Converting' )
 	processFile( inFileStr, outFileStr, minScore, namePre )
-	print( 'Done' )
+	if isPrint:
+		print( 'Done' )
 	
 def processFile( inFileStr, outFileStr, minScore, namePre ):
 	
@@ -41,40 +45,42 @@ def processFile( inFileStr, outFileStr, minScore, namePre ):
 		r1 = lineAr[2].split( ':' )
 		chrm = r1[0]
 		r2 = r1[1].split('-')
-		start = r2[0]
+		start = int(r2[0])-1
 		end = r2[1]
-		outAr = [chrm, start, end]
+		outAr = [chrm, str(start), end]
 		if namePre == '':
 			outAr +=[ lineAr[1] ]
 		else:
 			outAr += [ '{:s}-{:s}'.format( namePre, lineAr[1] ) ]
 		outFile.write( '\t'.join( outAr ) + '\n' )
-	# end for line
 	inFile.close()
 	outFile.close()
 			
 
 def parseInputs( argv ):
-	minScore = -1
+	minScore = MINSCORE
 	namePre = ''
 	outID = None
+	isPrint = True
 	startInd = 0
 	
-	for i in range(min(3,len(argv)-1)):
+	for i in range(min(5,len(argv)-1)):
 		if argv[i].startswith( '-o=' ):
 			outID = argv[i][3:]
+			startInd += 1
+		elif argv[i] == '-q':
+			isPrint = False
 			startInd += 1
 		elif argv[i].startswith( '-v=' ):
 			try:
 				minScore = float( argv[i][3:] )
-				startInd += 1
 			except ValueError:
-				print( 'ERROR: score threshold must be numeric' )
-				exit()
+				print( 'WARNING: score threshold must be numeric...using default', MINSCORE )
+			startInd += 1
 		elif argv[i].startswith( '-p=' ):
 			namePre = argv[i][3:]
 			startInd += 1
-		elif argv[i] == '-h':
+		elif argv[i] in [ '-h', '--help', '-help']:
 			printHelp()
 			exit()
 		elif argv[i].startswith( '-' ):
@@ -82,12 +88,19 @@ def parseInputs( argv ):
 			exit()
 	# end for
 	inFileStr = argv[startInd]
-	processInputs( inFileStr, minScore, namePre, outID )
+	processInputs( inFileStr, minScore, namePre, outID, isPrint )
 		
 
 def printHelp():
-	print( 'Usage: python dmr_file_to_bed.py [-v=score_thresh] [-p=name_prefix] [-o=outID] <in_file>' )
-	print( '-v=score_thresh\tmin score to include in output [default -1]' )
+	print( 'Usage:\tpython dmr_file_to_bed.py [-h] [-q] [-v=score_thresh] [-p=name_prefix]\n\t[-o=outID] <in_file>' )
+	print()
+	print( 'Required:' )
+	print( 'in_file\t\tinput file of DMRs; switches output of dmr_gen_ztesting' )
+	print()
+	print( 'Optional:' )
+	print( '-h\t\tprint help and exit' )
+	print( '-q\t\tquiet; do not print progress' )
+	print( '-v=score_thresh\tmin score to include in output [default {:g}]'.format( MINSCORE) )
 	print( '-p=name_prefix\tprefix for naming features [default None]' )
 	print( '-o=outID\tidentifer for output file' )
 	

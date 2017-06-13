@@ -28,8 +28,7 @@ Listed below are the software versions used for analysis in the paper.
 	- Scikit: 0.17.1
 	- Pandas: 0.17.0
 
-Most scripts should work with other versions, but it is not guaranteed. Scripts will **not*
-* work for Python2.
+Most scripts should work with other versions, but it is not guaranteed. Scripts will **not** work for Python2.
 
 ## Required Scripts
 

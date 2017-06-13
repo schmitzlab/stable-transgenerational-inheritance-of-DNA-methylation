@@ -31,8 +31,8 @@ We combine the information from all samples in a line to form a "pan-methylome".
 
 For example run, [combine_allc_pe.py](appendix/#combine-allc-pe-py)
 
-```
-    python combine_allc_pe.py -o=lineA-pan-methylome -c=Chr1,Chr2 allc_path A-1 A-2 A-3
+```bash
+python combine_allc_pe.py -o=lineA-pan-methylome -c=Chr1,Chr2 allc_path A-1 A-2 A-3
 ```
 
 This creates two files (one for each chromosome) *allc_lineA-pan-methylome_Chr1.tsv* and *allc_lineA-pan-methylome_Chr2.tsv*.
@@ -40,8 +40,8 @@ This creates two files (one for each chromosome) *allc_lineA-pan-methylome_Chr1.
 ### Step 2: Unmethylate the pan-methylome
 We are trying to identify all methylated regions, so we want to create a null, unmethylated genome to compare it against.
 
-```
-    python unmethylate_allc_pe.py allc_lineA-pan-methylome_Chr1.tsv allc_lineA-pan-methylome_Chr2.tsv
+```bash
+python unmethylate_allc_pe.py allc_lineA-pan-methylome_Chr1.tsv allc_lineA-pan-methylome_Chr2.tsv
 ```
 
 This creates two files (one for each input): *allc_lineA-pan-methylome-unmethylated_Chr1.tsv* and *allc_lineA-pan-methylome-unmethylated_Chr2.tsv*
@@ -64,8 +64,8 @@ To save computational time later, we will create a new allC file for each sample
 
 For example, run [filter_allc_coverage_pe.py](appendix/#filter-allc-coverage-pe-py) to with minimum coverage 2. This script expects all chromosomes in one allC file.
 
-```
-    python filter_allc_coverage_pe.py -v=2 allc_path A-1 A-2 A-3
+```bash
+python filter_allc_coverage_pe.py -v=2 allc_path A-1 A-2 A-3
 ```
 
 This creates files *allc_A-1_cov2.tsv*, *allc_A-2_cov2.tsv*, and *allc_A-3_cov2.tsv*.
@@ -76,12 +76,40 @@ With the DMR list, we want to get the number of methylated and unmethylated read
 
 To allow for fair comparsion between samples, we want to use positions which have sufficient coverage in all samples. So we use the coverage allC files created in Step 2. In this script, the coverage parameter is used to search for files named as `allc_samplename_cov#.tsv`, which includes all chromosomes.
 
-Run [dmr_gen_counts.py](appendix/#dmr-gen-counts-py) for minimum coverage 2.
+Run [dmr_gen_counts_pe.py](appendix/#dmr-gen-counts-pe-py) for minimum coverage 2.
 
-```
-    python dmr_gen_counts.py -v=2 dmr_list.tsv allc_path A-1 A-2 A-3
+```bash
+python dmr_gen_counts_pe.py -v=2 dmr_list.tsv allc_path A-1 A-2 A-3
 ```
 
-This creates file **.
+This creates file *out_dmr-gen_c.tsv*.
 
 ### Step 4. Identify signficant DMRs
+
+Next, we use a z-test to determine if a a region is differentially methylated between two generations. We are testing for a change in methylation level greater a specified threshold. 
+The threshold is important because we could identify a region with statistically significant differential methylation but is only a change of 1%, which is unlikely to be biologically signficant. Threshold is definited as
+* Percent change between samples, i.e. 40% to 50% is a 25% change (default)
+* Raw methylation level, i.e. 40% to 50% is a 10% change
+Also includes parameters to set minimum length of region and minimum number of covered cytosines.
+
+This script uses the output of Step 3, *out_dmr-gen_c.tsv*.
+
+Run [dmr_gen_ztesting.py](appendix/#dmr-gen-ztesting-py) to test for methylation level change of 25%
+
+```bash
+python dmr_gen_ztesting.py -wm -m=0.25 out_dmr-gen_c.tsv
+```
+
+This creates three files: *out_dmr-gen_c_full.tsv* (full set of statistics for input dataset), *out_dmr-gen_c_switches.tsv* (number of switches per region), and *out_dmr-gen_c_switch_counts.tsv* (number of regions per number of possible switches).
+
+### Step 5: Convert to BED file
+
+Now, we use the output of Step 4 (*out_dmr-gen_C_switches.tsv*) to create a BED file of the DMRs. Score parameter filters based on the number of switches.
+
+Run [dmr_file_to_bed.py](appendix/#dmr-file-to-bed-py) to get all regions with at least one switch
+
+```bash
+python dmr_file_to_bed.py -v=1 out_dmr-gen_c_switches.tsv
+```
+
+This creates *out_dmr-gen_c.bed*.

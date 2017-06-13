@@ -567,6 +567,7 @@ def printHelp():
 	print()
 	print( 'Optional:' )
 	print( '-q\t\tquiet; do not print progress' )
+	print( '-h\t\tprint help and exit' )
 	print( '-n-mpv\t\tdo not check for systematic mid-parent bias' )
 	print( '-t-out\t\twrite transition matrix to file' )
 	print( '-g=generation\tgeneration of self-crossing; used to determine classification\n\t\tprobabilities; use 0 for uniform weight [default {:d}]'.format( GENERATION) )
