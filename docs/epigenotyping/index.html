@@ -330,8 +330,8 @@
 
 <p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#find-mpos-diff-pe-py">find_mpos_diff_pe.py</a></p>
 
-<pre><code>    python ../scripts/find_mpos_diff_pe.py -v=3 -c=Chr1 -o=sample-data allc_files \
-    mother-sample father-sample
+<pre><code class="language-bash">python ../scripts/find_mpos_diff_pe.py -v=3 -c=Chr1 -o=sample-data allc_files \
+mother-sample father-sample
 </code></pre>
 
 <p>This will create a file named <em>sample-data_mpos_diff.tsv</em>.</p>
@@ -348,12 +348,12 @@
 
 <p>Data in not included but could be run. In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#filter-pos-gene-subset-py">filter_pos_gene_subset.py</a></p>
 
-<pre><code>    python ../scripts/filter_pos_gene_subset.py sample-data_mpos_diff.tsv &lt;subset_file&gt; &lt;gff_file&gt;
+<pre><code class="language-bash">python ../scripts/filter_pos_gene_subset.py sample-data_mpos_diff.tsv &lt;subset_file&gt; &lt;gff_file&gt;
 </code></pre>
 
 <p>Output (<em>sample-data_mpos_diff_subset_gene.tsv</em>) would have all positions in of entire gene body of genes listed in subset file.</p>
 
-<pre><code>    python ../scripts/filter_pos_gene_subset.py -v sample-data_mpos_diff.tsv na &lt;gff_file&gt;
+<pre><code class="language-bash">python ../scripts/filter_pos_gene_subset.py -v sample-data_mpos_diff.tsv na &lt;gff_file&gt;
 </code></pre>
 
 <p>Output (<em>sample-data_mpos_diff_nongenes_gene.tsv</em>) would have all non-genic positions.</p>
@@ -364,8 +364,8 @@
 
 <p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#weighted-meth-by-pos-pe-py">weighted_meth_by_pos_pe.py</a></p>
 
-<pre><code>    python ../scripts/weighted_meth_by_pos_pe.py -v=3 sample-data_mpos_diff.tsv \
-    allc_files mother-sample father-sample F2-1 F2-2 F2-3 F2-4 F2-5
+<pre><code class="language-bash">python ../scripts/weighted_meth_by_pos_pe.py -v=3 sample-data_mpos_diff.tsv \
+allc_files mother-sample father-sample F2-1 F2-2 F2-3 F2-4 F2-5
 </code></pre>
 
 <p>This will create a file named <em>sample-data_wm_pos_Chr1.tsv</em>.</p>
@@ -380,8 +380,8 @@
 
 <p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#epigenotyping-pe-v7-3-py">epigenotyping_pe_v7.3.py</a></p>
 
-<pre><code>    python ../scripts/epigenotyping_pe_v7.3.py -g=2 -b=50kb -c=3 -t=3300kb,6300kb \
-    -m=mother-sample -f=father-sample sample-data_wm_pos_Chr1.tsv
+<pre><code class="language-bash">python ../scripts/epigenotyping_pe_v7.3.py -g=2 -b=50kb -c=3 -t=3300kb,6300kb \
+-m=mother-sample -f=father-sample sample-data_wm_pos_Chr1.tsv
 </code></pre>
 
 <p>This will create a file name <em>sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv</em></p>
@@ -396,7 +396,7 @@
 
 <p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#find-crossovers-py">find_crossovers.py</a></p>
 
-<pre><code>    python ../scripts/find_crossovers.py sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv
+<pre><code class="language-bash">python ../scripts/find_crossovers.py sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv
 </code></pre>
 
 <p>This will create two files: <em>sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_count.tsv</em> (number of breakpoints per sample) and <em>sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_pos.tsv</em> (location of breakpoints)</p>
@@ -409,7 +409,7 @@
 
 <p>This is require a BAM file of the mapped reads and a BED formatted file of SNP locations then running <a href="http://www.htslib.org/doc/samtools-1.2.html">Samtools</a> mpileup getting the reads at the SNP locations. Remember, BED files are 0-based and half-open (start position is included, end position not). If the SNP occurs at 1-based position <em>x</em>, the BEC file coordinates would be <em>x-1, x</em>.</p>
 
-<pre><code>    samtools mpileup -l bed_file bam_file &gt; out.txt
+<pre><code class="language-bash">samtools mpileup -l bed_file bam_file &gt; out.txt
 </code></pre>
 
 <p>BAM files are not included in the sample data due to file size. Pileup files are available in <em>sample_data/pileup_files</em>.</p>
@@ -422,9 +422,9 @@
 
 <p>In <em>sample_data</em>, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#decode-pileup-pe-py">decode_pileup_pe.py</a>,</p>
 
-<pre><code>    python ../scripts/decode_pileup_pe.py -o=snp-info pileup_files/F2-1_pileup.txt \
-    pileup_files/F2-2_pileup.txt pileup_files/F2-3_pileup.txt pileup_files/F2-4_pileup.txt \
-    pileup_files/F2-5_pileup.txt pileup_files/mother-sample_pileup.txt pileup_files/father-sample_pileup.txt
+<pre><code class="language-bash">python ../scripts/decode_pileup_pe.py -o=snp-info pileup_files/F2-1_pileup.txt \
+pileup_files/F2-2_pileup.txt pileup_files/F2-3_pileup.txt pileup_files/F2-4_pileup.txt \
+pileup_files/F2-5_pileup.txt pileup_files/mother-sample_pileup.txt pileup_files/father-sample_pileup.txt
 </code></pre>
 
 <p>This will output <em>snp-info_decoded_pileup.tsv</em>.</p>
@@ -439,8 +439,8 @@
 
 <p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#pileup-genotype-pe-py">pileup_genotype_pe.py</a>,</p>
 
-<pre><code>    python ../scripts/pileup_genotype_pe.py -m=mother-sample -f=father-sample \
-    snp-info_decoded_pileup.tsv
+<pre><code class="language-bash">python ../scripts/pileup_genotype_pe.py -m=mother-sample -f=father-sample \
+snp-info_decoded_pileup.tsv
 </code></pre>
 
 <p>This creates output file <em>snp-info_decode_pileup_genotyped.tsv</em>.</p>

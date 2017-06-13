@@ -296,20 +296,20 @@
 <li>Accepts gzipped allC files</li>
 </ul>
 
-<pre><code>Usage:  python combine_allc_pe.py [-q] [-h] [-f] [-p=num_proc] [-o=out_id] 
+<pre><code class="language-nohighlight">Usage:  python combine_allc_pe.py [-q] [-h] [-f] [-p=num_proc] [-o=out_id] 
         [-c=chrm_list | -cf=fasta_index] &lt;allc_path&gt; &lt;sample_name&gt; [sample_name]*
 
 Required:
 allc_path       path to allC files
-sample_name	    name of sample; used to find allC files
+sample_name     name of sample; used to find allC files
                 when &quot;-f&quot; flag set, file with sample names listed one per line
 
 Optional:
 -q              quiet; do not print progress
--h		        print help message and exit
--f		        sample names are in file
--p=num_proc	    number of processors to use [default 1]
--o=out_id	    output file identifier [default &quot;combined&quot;]
+-h              print help message and exit
+-f              sample names are in file
+-p=num_proc     number of processors to use [default 1]
+-o=out_id       output file identifier [default &quot;combined&quot;]
 -c=chrm_list	comma-separated list of chrms to use [default for arabidopsis]
 -cf=fasta_index	fasta index file with chrms to use
 </code></pre>
@@ -323,7 +323,7 @@ Optional:
 <li>Output files are named as input file name with <code>unmethylated</code> added</li>
 </ul>
 
-<pre><code>Usage:	python unmethylate_allc_pe.py [-q] [-h] [-f] [-p=num_proc] [-v=coverage]
+<pre><code class="language-nohighlight">Usage:  python unmethylate_allc_pe.py [-q] [-h] [-f] [-p=num_proc] [-v=coverage]
 	    &lt;allc_file&gt; [allc_file]*
 
 Required:
@@ -332,8 +332,8 @@ allc_file     allC file to unmethylated
 
 Optional:
 -q            quiet; do not print progress
--h		      print help message and exit
--f 		      allC files names listed in the file
+-h            print help message and exit
+-f            allC files names listed in the file
 -p=num_proc   number of processors to use [default 1]
 -v=coverage   coverage for each position [default as-is in input]
 </code></pre>
@@ -346,18 +346,97 @@ Optional:
 <li>Expects allC files to have all chromosomes for one sample</li>
 </ul>
 
-<pre><code>Usage:  python filter_allc_coverage_pe.py [-q] [-h] [-v=min_cov] &lt;allc_path&gt;
-	    &lt;sample_name&gt; [sample_name]*
+<pre><code class="language-nohighlight">Usage:  python filter_allc_coverage_pe.py [-q] [-h] [-v=min_cov] &lt;allc_path&gt;
+        &lt;sample_name&gt; [sample_name]*
 
 Required:
-allc_path	 path to allC files
-sampleN		 name of sample; used to find allC files
+allc_path    path to allC files
+sampleN      name of sample; used to find allC files
 
 Optional:
--q		     quiet; do not print progress
--h		     print help and exit
+-q           quiet; do not print progress
+-h           print help and exit
 -v=min_cov   min coverage for positions to include [default 3]
 -p=num_proc  number of processors to use [default 1]
+</code></pre>
+
+<h2 id="dmr-gen-counts-pe-py">dmr_gen_counts_pe.py</h2>
+
+<ul>
+<li>Required imports: sys, math, multiprocessing, subprocess, os</li>
+<li>Expects allC file to include all chromosomes</li>
+<li>When using coverage parameter, uses allC files output by <em>filter_allc_coverage_pe.py</em>.</li>
+<li>Accept gzipped allC files</li>
+<li>Includes option to create pickle files (python object files) of allC files (Saves processing time later)</li>
+<li><strong>Order of samples is important!!</strong> Script only includes comparsions of adjacent samples.</li>
+</ul>
+
+<pre><code class="language-nohighlight">Usage:  python dmr_gen_counts_pe.py [-h] [-q] [-k] [-o=out_id]
+        [-m=meth_type] [-p=num_proc] [-v=min_cov] &lt;dmr_file&gt; &lt;allc_path&gt; &lt;sample1&gt;
+        &lt;sample2&gt; [sampleN]*
+
+Required:
+dmr_file       tab-delimited file of DMR regions (1-indexed)
+allc_path      path to allC files
+sampleN        sample name to analyze; order of samples is important
+
+Optional:
+-h             print help and exit
+-q             quiet; do not print progress
+-k             pickle allC files; creates/reads pickle version of allC files
+               saves subsequent computational time but is additional memory
+-o=out_id      identifier for output file [default &quot;out&quot;]
+-p=num_proc    number of processors [default 1]
+-m=meth_type   sequence context; must be one of &quot;CG&quot;, &quot;CHG&quot;, &quot;CHH&quot;, and &quot;C&quot;
+</code></pre>
+
+<h2 id="dmr-gen-ztesting-py">dmr_gen_ztesting.py</h2>
+
+<ul>
+<li>Required imports: sys, math, os, pandas, numpy, scipy</li>
+<li>Other required files: bioFiles</li>
+<li>Input is the output of <em>dmr_gen_counts_pe.py</em></li>
+</ul>
+
+<pre><code class="language-nohighlight">Usage:  python dmr_gen_ztesting.py [-h] [-q] [-wm] [-n=num_c_thresh]
+        [-m=meth_thresh] [-d=length_thresh] [-f=fdr] [-o=outID] &lt;in_file&gt;
+
+Required:
+in_file           tab-delimited file of DMRs and read counts
+
+Optional:
+-h                print help and exit
+-q                quiet; do not print progress
+-wm               methylation threshold is for raw methyl difference
+                  not percent difference
+-n=num_c_thresh   min number of cytosines in region to be considered
+                  for analysis [default 10]
+-d=len_thresh     min length of dmr in bp [default 40]
+-m=meth_thresh    min methylation change btwn generations to be
+                  considered a switch [default 0.3]
+-f=fdr            FDR value for significant switches [default 0.05]
+-o=out_id         identifier for output files [default uses input file name]
+</code></pre>
+
+<h2 id="dmr-file-to-bed-py">dmr_file_to_bed.py</h2>
+
+<ul>
+<li>Required imports: sys, os</li>
+<li>Uses switches output of dmr_gen_ztesting.py</li>
+</ul>
+
+<pre><code class="language-nohighlight">Usage:  python dmr_file_to_bed.py [-h] [-q] [-v=score_thresh] [-p=name_prefix]
+        [-o=outID] &lt;in_file&gt;
+
+Required:
+in_file          input file of DMRs; switches output of dmr_gen_ztesting
+
+Optional:
+-h               print help and exit
+-q               quiet; do not print progress
+-v=score_thresh  min score to include in output [default -1]
+-p=name_prefix   prefix for naming features [default None]
+-o=outID         identifer for output file
 </code></pre>
 
 <h2 id="find-mpos-diff-pe-py">find_mpos_diff_pe.py</h2>
@@ -368,17 +447,17 @@ Optional:
 <li>Accepts gzipped allC files</li>
 </ul>
 
-<pre><code>Usage:	python find_mpos_diff_pe.py [-h] [-q] [-v=min_cov] [-c=chrm_list]
-    [-o=out_id] [-p=num_proc] [-m=meth_types] &lt;allc_path&gt; &lt;sample1_name&gt;
-	&lt;sample2_name&gt;
+<pre><code class="language-nohighlight">Usage:  python find_mpos_diff_pe.py [-h] [-q] [-v=min_cov] [-c=chrm_list]
+        [-o=out_id] [-p=num_proc] [-m=meth_types] &lt;allc_path&gt; &lt;sample1_name&gt;
+        &lt;sample2_name&gt;
 
 Required:
 allc_path	path to allc files
 sample_name	names of samples to compare
 
 Optional:
--h      print this help screen and exit
--q      quiet; does not print progress
+-h              print this help screen and exit
+-q              quiet; does not print progress
 -v=min_cov      min coverage to include a position [default 3]
 -o=out_id       string for output file name [default &quot;out&quot;]
 -c=chrm_list    comma-separated list of chrms [default arabidopsis]
@@ -395,20 +474,20 @@ Optional:
 <li>Input should be the output of <em>find_mpos_diff_pe.py</em> to filter positions</li>
 </ul>
 
-<pre><code>Usage:	python filter_pos_gene_subset.py [-h] [-q] [-cds] [-v] &lt;pos_file&gt;
-	    &lt;subset_file&gt; &lt;gff_file&gt;
+<pre><code class="language-nohighlight">Usage:  python filter_pos_gene_subset.py [-h] [-q] [-cds] [-v] &lt;pos_file&gt;
+        &lt;subset_file&gt; &lt;gff_file&gt;
 
 Required:
-pos_file	 1-based position file, tab-delimited columns: chrm, start, end
-subset_file	 file with list of genes to subset, one gene per line
-		     use &quot;none&quot; or &quot;na&quot; to use all genes
-gff_file	 GFF formatted file with genes
+pos_file     1-based position file, tab-delimited columns: chrm, start, end
+subset_file  file with list of genes to subset, one gene per line
+             use &quot;none&quot; or &quot;na&quot; to use all genes
+gff_file     GFF formatted file with genes
 
 Optional:
--h		     print help and exit
--q		     quiet; do not print progress
--cds		 use CDS annotation not gene
--v		     include coordinates opposite of what is specified
+-h           print help and exit
+-q           quiet; do not print progress
+-cds         use CDS annotation not gene
+-v           include coordinates opposite of what is specified
 </code></pre>
 
 <h2 id="weighted-meth-by-pos-pe-py">weighted_meth_by_pos_pe.py</h2>
@@ -418,23 +497,23 @@ Optional:
 <li>Accepts gzipped allC files</li>
 </ul>
 
-<pre><code>Usage:	python find_mpos_diff_pe.py [-h] [-q] [-v=min_cov] [-c=chrm_list]
-	    [-o=out_id] [-p=num_proc] [-m=meth_types] &lt;allc_path&gt; &lt;sample1_name&gt;
-	    &lt;sample2_name&gt;
+<pre><code class="language-nohighlight">Usage:  python find_mpos_diff_pe.py [-h] [-q] [-v=min_cov] [-c=chrm_list]
+        [-o=out_id] [-p=num_proc] [-m=meth_types] &lt;allc_path&gt; &lt;sample1_name&gt;
+        &lt;sample2_name&gt;
 
 Required:
-allc_path	path to allc files
-sample_name	names of samples to compare
+allc_path       path to allc files
+sample_name     names of samples to compare
 
 Optional:
--h		print this help screen and exit
--q		quiet; does not print progress
--v=min_cov	min coverage to include a position [default 3]
--o=out_id	string for output file name [default &quot;out&quot;]
+-h              print this help screen and exit
+-q              quiet; does not print progress
+-v=min_cov      min coverage to include a position [default 3]
+-o=out_id       string for output file name [default &quot;out&quot;]
 -c=chrm_list	comma-separated list of chrms [default arabidopsis]
--p=num_proc	num processors to use [default {:d}] 1
--m=meth_types	comma-separated list of &quot;CG&quot;, &quot;CHG&quot;, and/or &quot;CHH&quot;
-		[default all]
+-p=num_proc     num processors to use [default {:d}] 1
+-m=meth_types   comma-separated list of &quot;CG&quot;, &quot;CHG&quot;, and/or &quot;CHH&quot;
+                [default all]
 </code></pre>
 
 <h2 id="epigenotyping-pe-v7-3-py">epigenotyping_pe_v7.3.py</h2>
@@ -450,36 +529,37 @@ Optional:
 <li>This script is run <em>per chromosome</em>.</li>
 </ul>
 
-<pre><code>Usage:	python epigenotyping_pe_v7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]
-	[-c=bin_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_
-	samples][-f=father_samples] [-b=bin_size] [-t=centromere] &lt;input_file&gt;
+<pre><code class="language-nohighlight">Usage:  python epigenotyping_pe_v7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]
+        [-c=bin_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_
+        samples][-f=father_samples] [-b=bin_size] [-t=centromere] &lt;input_file&gt;
 
 Requried:
-input_file	tab-delimited file of of weighted methylation by position for samples
+input_file          tab-delimited file of of weighted methylation by position for samples
 
 Optional:
--q		quiet; do not print progress
--n-mpv		do not check for systematic mid-parent bias
--t-out		write transition matrix to file
--g=generation	generation of self-crossing; used to determine classification
-		probabilities; use 0 for uniform weight [default 2]
--d=decode_type	decoding type to use (capitlization ignored) [default A]
-		Viterbi=&quot;v&quot; or &quot;viterbi&quot;
-		Forward-Backward=&quot;forwardbackward&quot;, &quot;f&quot; or &quot;fb&quot;
-		Both=&quot;all&quot; or &quot;a&quot;
-		Off=&quot;false&quot;, &quot;none&quot;, or &quot;n&quot;
--o=out_id	identifier for output file [default &quot;out&quot; or variation of
-		input file name]
--p=num_proc	number of processors [default 1
--c=bin_thresh	minimum number of features per bin to be classified
-		groups bins to reach this number [default 3
--m=mother_samples	comma-separated sample name(s) of mother
-		[default mother]
--f=father_samples	comma-separated sample name(s) of father
-		[default father]
--b=bin_size	size of bins in bp [default 100kbp]
--t=centromere	centromere coordinates as &quot;start,end&quot;; can include multipe
-		centromeres as &quot;start1,end1,start2,end2...&quot; [default None]
+-q                  quiet; do not print progress
+-h                  print help and exit
+-n-mpv              do not check for systematic mid-parent bias
+-t-out              write transition matrix to file
+-g=generation       generation of self-crossing; used to determine classification
+                    probabilities; use 0 for uniform weight [default 2]
+-d=decode_type      decoding type to use (capitlization ignored) [default A]
+                    Viterbi=&quot;v&quot; or &quot;viterbi&quot;
+                    Forward-Backward=&quot;forwardbackward&quot;, &quot;f&quot; or &quot;fb&quot;
+                    Both=&quot;all&quot; or &quot;a&quot;
+                    Off=&quot;false&quot;, &quot;none&quot;, or &quot;n&quot;
+-o=out_id           identifier for output file [default &quot;out&quot; or variation of
+                    input file name]
+-p=num_proc         number of processors [default 1
+-c=bin_thresh       minimum number of features per bin to be classified
+                    groups bins to reach this number [default 3
+-m=mother_samples   comma-separated sample name(s) of mother
+                    [default mother]
+-f=father_samples   comma-separated sample name(s) of father
+                    [default father]
+-b=bin_size         size of bins in bp [default 100kbp]
+-t=centromere       centromere coordinates as &quot;start,end&quot;; can include multipe
+                    centromeres as &quot;start1,end1,start2,end2...&quot; [default None]
 </code></pre>
 
 <h2 id="find-crossovers-py">find_crossovers.py</h2>
@@ -489,18 +569,18 @@ Optional:
 <li>This script is run per chromosome.</li>
 </ul>
 
-<pre><code>Usage:	python find_crossovers.py [-c=predict_column] [-o=out_id] &lt;input_file&gt;
+<pre><code class="language-nohighlight">Usage:  python find_crossovers.py [-c=predict_column] [-o=out_id] &lt;input_file&gt;
 
 Required:
-input_file	tab-delimited file with samples epigenotype per bin
+input_file           tab-delimited file with samples epigenotype per bin
 
 Optional:
--h		print this help menu and exit
--q		quiet;do not print progress
--o=out_id	output identifier [default variation of
-		input file name
--c=predict_column 	label of column to use as final epigenotype
-		[default &quot;vit.prediction&quot;]
+-h                   print this help menu and exit
+-q                   quiet;do not print progress
+-o=out_id            output identifier [default variation of
+                     input file name
+-c=predict_column    label of column to use as final epigenotype
+                     [default &quot;vit.prediction&quot;]
 </code></pre>
 
 <h2 id="decode-pileup-pe-py">decode_pileup_pe.py</h2>
@@ -510,15 +590,16 @@ Optional:
 <li>Assumes all pileup files have information for the same positions.</li>
 </ul>
 
-<pre><code>Usage: python decode_pileup_pe.py [-o=out_id] [-p=num_proc] &lt;pileup_file&gt; [pileup_file]*
+<pre><code class="language-nohighlight">Usage:  python decode_pileup_pe.py [-o=out_id] [-p=num_proc] &lt;pileup_file&gt; [pileup_file]*
 
 Required:
-pileup_file	pileup file for a sample; output from samtools pileup
+pileup_file    pileup file for a sample; output from samtools pileup
 
 Optional:
--q		quiet; do not print progress
--o=out_id	identifier for output file [default &quot;out&quot;]
--p=num_proc	number of processors [default 1]
+-q             quiet; do not print progress
+-h             print this help menu and exit
+-o=out_id      identifier for output file [default &quot;out&quot;]
+-p=num_proc    number of processors [default 1]
 
 </code></pre>
 
@@ -529,21 +610,21 @@ Optional:
 <li>Uses the output of <em>decode_pileup_pe.py</em></li>
 </ul>
 
-<pre><code>Usage:	python pileup_genotype_pe.py [-h] [-q] [-o=out_id] [-p=num_proc]
-	[-m=mother_label] [-f=father_label] [-v-min_cov] &lt;decoded_pileup_file&gt; 
+<pre><code class="language-nohighlight">Usage:  python pileup_genotype_pe.py [-h] [-q] [-o=out_id] [-p=num_proc]
+        [-m=mother_label] [-f=father_label] [-v-min_cov] &lt;decoded_pileup_file&gt; 
 
 Required:
-decode_pileup_file	tab-delimited input file; output of decode_pileup_pe.py
+decode_pileup_file  tab-delimited input file; output of decode_pileup_pe.py
 
 Optional:
--h		print help and exit
--q		quiet; do not print progress
--o=out_id	identifier for output file [default variation of input file
-		name]
--v=min_cov	min number of reads needed to support genotype [default 1]
--p=num_pro	number of processors [default 1]
--m=mother_label	sample name of mother [default mother]
--f=father_label	sample name of father [default father]
+-h                  print help and exit
+-q                  quiet; do not print progress
+-o=out_id           identifier for output file [default variation of input 
+                    file name]
+-v=min_cov          min number of reads needed to support genotype [default 1]
+-p=num_proc         number of processors [default 1]
+-m=mother_label     sample name of mother [default mother]
+-f=father_label     sample name of father [default father]
 </code></pre>
 
 

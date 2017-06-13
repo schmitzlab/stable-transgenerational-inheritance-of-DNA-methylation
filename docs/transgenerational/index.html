@@ -326,7 +326,7 @@ For illustrative purposes, assume that three generations of line &ldquo;A&rdquo;
 
 <p>For example run, <a href="appendix/#combine-allc-pe-py">combine_allc_pe.py</a></p>
 
-<pre><code>    python combine_allc_pe.py -o=lineA-pan-methylome -c=Chr1,Chr2 allc_path A-1 A-2 A-3
+<pre><code class="language-bash">python combine_allc_pe.py -o=lineA-pan-methylome -c=Chr1,Chr2 allc_path A-1 A-2 A-3
 </code></pre>
 
 <p>This creates two files (one for each chromosome) <em>allc_lineA-pan-methylome_Chr1.tsv</em> and <em>allc_lineA-pan-methylome_Chr2.tsv</em>.</p>
@@ -335,7 +335,7 @@ For illustrative purposes, assume that three generations of line &ldquo;A&rdquo;
 
 <p>We are trying to identify all methylated regions, so we want to create a null, unmethylated genome to compare it against.</p>
 
-<pre><code>    python unmethylate_allc_pe.py allc_lineA-pan-methylome_Chr1.tsv allc_lineA-pan-methylome_Chr2.tsv
+<pre><code class="language-bash">python unmethylate_allc_pe.py allc_lineA-pan-methylome_Chr1.tsv allc_lineA-pan-methylome_Chr2.tsv
 </code></pre>
 
 <p>This creates two files (one for each input): <em>allc_lineA-pan-methylome-unmethylated_Chr1.tsv</em> and <em>allc_lineA-pan-methylome-unmethylated_Chr2.tsv</em></p>
@@ -359,7 +359,7 @@ After filtering, we have a set of putative epialleles. For illustrative purposes
 
 <p>For example, run <a href="appendix/#filter-allc-coverage-pe-py">filter_allc_coverage_pe.py</a> to with minimum coverage 2. This script expects all chromosomes in one allC file.</p>
 
-<pre><code>    python filter_allc_coverage_pe.py -v=2 allc_path A-1 A-2 A-3
+<pre><code class="language-bash">python filter_allc_coverage_pe.py -v=2 allc_path A-1 A-2 A-3
 </code></pre>
 
 <p>This creates files <em>allc_A-1_cov2.tsv</em>, <em>allc_A-2_cov2.tsv</em>, and <em>allc_A-3_cov2.tsv</em>.</p>
@@ -370,14 +370,40 @@ After filtering, we have a set of putative epialleles. For illustrative purposes
 
 <p>To allow for fair comparsion between samples, we want to use positions which have sufficient coverage in all samples. So we use the coverage allC files created in Step 2. In this script, the coverage parameter is used to search for files named as <code>allc_samplename_cov#.tsv</code>, which includes all chromosomes.</p>
 
-<p>Run <a href="appendix/#dmr-gen-counts-py">dmr_gen_counts.py</a> for minimum coverage 2.</p>
+<p>Run <a href="appendix/#dmr-gen-counts-pe-py">dmr_gen_counts_pe.py</a> for minimum coverage 2.</p>
 
-<pre><code>    python dmr_gen_counts.py -v=2 dmr_list.tsv allc_path A-1 A-2 A-3
+<pre><code class="language-bash">python dmr_gen_counts_pe.py -v=2 dmr_list.tsv allc_path A-1 A-2 A-3
 </code></pre>
 
-<p>This creates file **.</p>
+<p>This creates file <em>out_dmr-gen_c.tsv</em>.</p>
 
 <h3 id="step-4-identify-signficant-dmrs">Step 4. Identify signficant DMRs</h3>
+
+<p>Next, we use a z-test to determine if a a region is differentially methylated between two generations. We are testing for a change in methylation level greater a specified threshold.
+The threshold is important because we could identify a region with statistically significant differential methylation but is only a change of 1%, which is unlikely to be biologically signficant. Threshold is definited as
+* Percent change between samples, i.e. 40% to 50% is a 25% change (default)
+* Raw methylation level, i.e. 40% to 50% is a 10% change
+Also includes parameters to set minimum length of region and minimum number of covered cytosines.</p>
+
+<p>This script uses the output of Step 3, <em>out_dmr-gen_c.tsv</em>.</p>
+
+<p>Run <a href="appendix/#dmr-gen-ztesting-py">dmr_gen_ztesting.py</a> to test for methylation level change of 25%</p>
+
+<pre><code class="language-bash">python dmr_gen_ztesting.py -wm -m=0.25 out_dmr-gen_c.tsv
+</code></pre>
+
+<p>This creates three files: <em>out_dmr-gen_c_full.tsv</em> (full set of statistics for input dataset), <em>out_dmr-gen_c_switches.tsv</em> (number of switches per region), and <em>out_dmr-gen_c_switch_counts.tsv</em> (number of regions per number of possible switches).</p>
+
+<h3 id="step-5-convert-to-bed-file">Step 5: Convert to BED file</h3>
+
+<p>Now, we use the output of Step 4 (<em>out_dmr-gen_C_switches.tsv</em>) to create a BED file of the DMRs. Score parameter filters based on the number of switches.</p>
+
+<p>Run <a href="appendix/#dmr-file-to-bed-py">dmr_file_to_bed.py</a> to get all regions with at least one switch</p>
+
+<pre><code class="language-bash">python dmr_file_to_bed.py -v=1 out_dmr-gen_c_switches.tsv
+</code></pre>
+
+<p>This creates <em>out_dmr-gen_c.bed</em>.</p>
 
 
 			<aside class="copyright" role="note">
