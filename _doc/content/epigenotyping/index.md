@@ -157,3 +157,7 @@ When one parent is genotyped "NA", there was a distinguishable difference betwee
 Positions where one of the other samples is genotype "NA" indicates insufficient coverage at that position to determine genotype.
 
 For the sample data, the first two SNPs are indistinguishable in the parents. The last SNP has multiple "NA" genotypes. The third SNP is the only useful position.
+
+## Real Data
+
+This method was designed to epigenotype a group of F2 individuals from a cross of genetically identical plants. Analysis of this experiment is currently under review for publication. The data will be available to the public when the paper is published. Check back for updates.
