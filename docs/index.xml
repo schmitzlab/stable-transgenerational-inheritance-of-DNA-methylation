@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Inheritance of DNA Methylation</title>
+    <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</link>
+    <description>Recent content on Inheritance of DNA Methylation</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <copyright>Released under the MIT license</copyright>
+    
+	<atom:link href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+  </channel>
+</rss>

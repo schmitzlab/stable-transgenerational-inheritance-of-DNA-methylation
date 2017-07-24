@@ -1,0 +1,4 @@
+Chr1	1947646	G	18	a.aaaa.aaaaa.aa..a	EAEEAAE/EEEAEEEEEA
+Chr1	3150227	C	7	T$,....,	/E///.A
+Chr1	6357120	G	17	aa.aa........a.a.	EEAEEEE<EEEEE/E/E
+Chr1	7231264	G	31	.$aa........a...aaaa....aa.aa...	EEEEAEAEEEEE6EEEEEEAE/EAEEEEEEA

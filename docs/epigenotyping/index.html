@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+  
+  
+  
+  
+   <html class="no-js"> 
+
+  <head lang="en-us">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,user-scalable=no,initial-scale=1,maximum-scale=1">
+    <meta http-equiv="X-UA-Compatible" content="IE=10" />
+    <title>Epigenotyping - Inheritance of DNA Methylation</title>
+    <meta name="generator" content="Hugo 0.21" />
+
+    
+    <meta name="description" content="Epigenotyping">
+    
+    <link rel="canonical" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/">
+    
+    <meta name="author" content="Brigitte Hofmeister">
+    
+
+    <meta property="og:url" content="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/">
+    <meta property="og:title" content="Inheritance of DNA Methylation">
+    
+    <meta name="apple-mobile-web-app-title" content="Inheritance of DNA Methylation">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+    <link rel="shortcut icon" type="image/x-icon" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/images/favicon.ico">
+    <link rel="icon" type="image/x-icon" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/images/favicon.ico">
+
+    <style>
+      @font-face {
+        font-family: 'Icon';
+        src: url('https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/fonts/icon.eot');
+        src: url('https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/fonts/icon.eot')
+               format('embedded-opentype'),
+             url('https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/fonts/icon.woff')
+               format('woff'),
+             url('https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/fonts/icon.ttf')
+               format('truetype'),
+             url('https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/fonts/icon.svg')
+               format('svg');
+        font-weight: normal;
+        font-style: normal;
+      }
+    </style>
+
+    <link rel="stylesheet" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/stylesheets/application.css">
+    <link rel="stylesheet" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/stylesheets/temporary.css">
+    <link rel="stylesheet" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/stylesheets/palettes.css">
+    <link rel="stylesheet" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/stylesheets/highlight/highlight.css">
+
+    
+    
+    
+    <link rel="stylesheet" href="//fonts.googleapis.com/css?family=Roboto:400,700|Roboto&#43;Mono">
+    <style>
+      body, input {
+        font-family: 'Roboto', Helvetica, Arial, sans-serif;
+      }
+      pre, code {
+        font-family: 'Roboto Mono', 'Courier New', 'Courier', monospace;
+      }
+    </style>
+
+    
+    <link rel="stylesheet" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/custom.css">
+    
+    <script src="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/javascripts/modernizr.js"></script>
+
+    
+
+  </head>
+  <body class="palette-primary-cyan palette-accent-red">
+
+
+
+	
+	
+
+
+<div class="backdrop">
+	<div class="backdrop-paper"></div>
+</div>
+
+<input class="toggle" type="checkbox" id="toggle-drawer">
+<input class="toggle" type="checkbox" id="toggle-search">
+<label class="toggle-button overlay" for="toggle-drawer"></label>
+
+<header class="header">
+	<nav aria-label="Header">
+  <div class="bar default">
+    <div class="button button-menu" role="button" aria-label="Menu">
+      <label class="toggle-button icon icon-menu" for="toggle-drawer">
+        <span></span>
+      </label>
+    </div>
+    <div class="stretch">
+      <div class="title">
+        Epigenotyping
+      </div>
+    </div>
+
+    
+
+    
+    
+        
+  </div>
+  <div class="bar search">
+    <div class="button button-close" role="button" aria-label="Close">
+      <label class="toggle-button icon icon-back" for="toggle-search"></label>
+    </div>
+    <div class="stretch">
+      <div class="field">
+        <input class="query" type="text" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck>
+      </div>
+    </div>
+    <div class="button button-reset" role="button" aria-label="Search">
+      <button class="toggle-button icon icon-close" id="reset-search"></button>
+    </div>
+  </div>
+</nav>
+</header>
+
+<main class="main">
+	<div class="drawer">
+		<nav aria-label="Navigation">
+  <a href="https://github.com/schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation" class="project">
+    <div class="banner">
+      
+      <div class="name">
+        <strong>Inheritance of DNA Methylation </strong>
+        
+          <br>
+          schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation
+        
+      </div>
+    </div>
+  </a>
+
+  <div class="scrollable">
+    <div class="wrapper">
+      
+        <ul class="repo">
+          <li class="repo-download">
+            <a href="https://github.com/schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation/archive/master.zip" target="_blank" title="Download" data-action="download">
+              <i class="icon icon-download"></i> Download
+            </a>
+          </li>
+
+            <li class="repo-stars">
+            <a href="https://github.com/schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation/stargazers" target="_blank" title="Stargazers" data-action="star">
+              <i class="icon icon-star"></i> Stars
+              <span class="count">&ndash;</span>
+            </a>
+          </li>
+        </ul>
+        <hr>
+      
+
+      <div class="toc">
+        
+        <ul>
+          
+
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Home" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/">
+	
+	Home
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Getting started" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/">
+	
+	Getting started
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Transgeneration inheritance" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/">
+	
+	Transgeneration inheritance
+</a>
+
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a class="current" title="Epigenotyping" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/">
+	
+	Epigenotyping
+</a>
+
+
+<ul id="scrollspy">
+</ul>
+
+
+  
+</li>
+
+
+
+<li>
+  
+    
+
+
+
+<a  title="Appendix" href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix">
+	
+	Appendix
+</a>
+
+
+
+  
+</li>
+
+
+        </ul>
+        
+
+        
+        <hr>
+        <span class="section">The author</span>
+        
+        <ul>
+          
+
+          
+
+          
+        </ul>
+        
+      </div>
+    </div>
+  </div>
+</nav>
+
+	</div>
+
+	<article class="article">
+		<div class="wrapper">
+			<h1>Epigenotyping </h1>
+
+			
+
+<h2 id="beginnings">Beginnings</h2>
+
+<h3 id="set-up-requirements">Set up requirements</h3>
+
+<ul>
+<li>All samples have allC files.
+
+<ul>
+<li>AllC file are tab-delimited.</li>
+<li>They have the following columns
+
+<ul>
+<li>Chromosome</li>
+<li>Position (1-indexed)</li>
+<li>Strand (+ or -)</li>
+<li>Context (3 bp sequence)</li>
+<li>Number methylated reads</li>
+<li>Number total reads</li>
+<li>Is the position methylated? (1 for yes)</li>
+</ul></li>
+</ul></li>
+<li>All of the allC files are named as &ldquo;allc_samplename_chromosome.tsv&rdquo;.</li>
+<li>All of the allC files are in one directory.</li>
+</ul>
+
+<h3 id="determining-the-correct-parameters">Determining the correct parameters</h3>
+
+<ul>
+<li>Information coming soon</li>
+</ul>
+
+<h2 id="workflow">Workflow</h2>
+
+<h3 id="step-1-find-informative-cytosines">Step 1: Find informative cytosines</h3>
+
+<p>There should be two parent samples and need to determine which positions have different methylation. Assuming you have allC files, this is determine by comparing the final column of the allC file which says if the cytosine is methylated and positions which is methylated in one sample but not in the other are included.</p>
+
+<p>Note that low-covered positions are considered &ldquo;unmethylated&rdquo;, so the coverage parameter is important to make sure positions are differentially methylated because there is differential methylation not due to lack of coverage.</p>
+
+<p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#find-mpos-diff-pe-py">find_mpos_diff_pe.py</a></p>
+
+<pre><code class="language-bash">python ../scripts/find_mpos_diff_pe.py -v=3 -c=Chr1 -o=sample-data allc_files \
+mother-sample father-sample
+</code></pre>
+
+<p>This will create a file named <em>sample-data_mpos_diff.tsv</em>.</p>
+
+<p><strong>Note</strong>: If methylation data does not include the final column which determines if site is methylated, use a different criteria to determine which sites are differentially methylated between the samples. Put the results in a tab-delimited file with two columns: chromosome and position. This file can use used in the next step instead of the output from <code>find_mpos_diff_pe.py</code>.</p>
+
+<h3 id="step-1-5-filter-by-feature-type-optional">Step 1.5: Filter by feature type [optional]</h3>
+
+<p>For samples such as epiRILs, it&rsquo;s important to filter cytosines by feature type, such as genes and/or gene-body methylated genes. Lists of gene-body methyalted genes can be found from <a href="http://www.pnas.org/content/113/32/9111.long">Bewick et al. (2016)</a>. Positions could be filtered by other characteristics as well.</p>
+
+<p>The script requires the position list to filter and a GFF file with gene annotation. It can also accept a gene subset list. If you don&rsquo;t want to subset the genes, specificy <code>na</code> instead of subset file. By default, positions within the genes are included. Use <code>-cds</code> to only have positions in CDS regions.</p>
+
+<p>The <code>-v</code> option selects opposite of genes/subset. If no gene subset is given <code>-v</code> gets all positions outside of genes/CDS. If gene subset is given, <code>-v</code> gets all positions of genes not in the subset list.</p>
+
+<p>Data in not included but could be run. In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#filter-pos-gene-subset-py">filter_pos_gene_subset.py</a></p>
+
+<pre><code class="language-bash">python ../scripts/filter_pos_gene_subset.py sample-data_mpos_diff.tsv &lt;subset_file&gt; &lt;gff_file&gt;
+</code></pre>
+
+<p>Output (<em>sample-data_mpos_diff_subset_gene.tsv</em>) would have all positions in of entire gene body of genes listed in subset file.</p>
+
+<pre><code class="language-bash">python ../scripts/filter_pos_gene_subset.py -v sample-data_mpos_diff.tsv na &lt;gff_file&gt;
+</code></pre>
+
+<p>Output (<em>sample-data_mpos_diff_nongenes_gene.tsv</em>) would have all non-genic positions.</p>
+
+<h3 id="step-2-methylation-level-of-samples">Step 2: Methylation level of samples</h3>
+
+<p>Once we have the informative positions, we need the methylation level of all samples we want to analyze. Again, the coverage parameter is important to get an accurate methylation level at each position.</p>
+
+<p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#weighted-meth-by-pos-pe-py">weighted_meth_by_pos_pe.py</a></p>
+
+<pre><code class="language-bash">python ../scripts/weighted_meth_by_pos_pe.py -v=3 sample-data_mpos_diff.tsv \
+allc_files mother-sample father-sample F2-1 F2-2 F2-3 F2-4 F2-5
+</code></pre>
+
+<p>This will create a file named <em>sample-data_wm_pos_Chr1.tsv</em>.</p>
+
+<p><strong>Note</strong>: allC files used by this script do not need to contain the final &ldquo;isMethylated&rdquo; column. They must follow the same naming convention and have the following columns: chromosome, position, strand, 3-bp sequence context, methylated read count, total read count.</p>
+
+<h3 id="step-3-epigenotyping">Step 3: Epigenotyping</h3>
+
+<p>The main input for epigenotyping is the output of <code>weighted_meth_by_pos_pe.py</code>.</p>
+
+<p>This is the main script. It accepts several parameters. Defaults were chosen for the paper but will need to be updated depending on species, filial generation, coverage, ect.</p>
+
+<p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#epigenotyping-pe-v7-3-py">epigenotyping_pe_v7.3.py</a></p>
+
+<pre><code class="language-bash">python ../scripts/epigenotyping_pe_v7.3.py -g=2 -b=50kb -c=3 -t=3300kb,6300kb \
+-m=mother-sample -f=father-sample sample-data_wm_pos_Chr1.tsv
+</code></pre>
+
+<p>This will create a file name <em>sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv</em></p>
+
+<h3 id="step-4-graphing">Step 4: Graphing</h3>
+
+<p>Information coming soon.</p>
+
+<h3 id="step-5-finding-crossovers">Step 5: Finding crossovers</h3>
+
+<p>Once you have an epigenotype map, you can get approximate crossover locations and number of crossovers.</p>
+
+<p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#find-crossovers-py">find_crossovers.py</a></p>
+
+<pre><code class="language-bash">python ../scripts/find_crossovers.py sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv
+</code></pre>
+
+<p>This will create two files: <em>sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_count.tsv</em> (number of breakpoints per sample) and <em>sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_pos.tsv</em> (location of breakpoints)</p>
+
+<h2 id="snp-verification">SNP Verification</h2>
+
+<p>If SNP information is available, it is possible to use WGBS to to verify the epigenotype map.</p>
+
+<h3 id="step-1-samtools-mpileup">Step 1: Samtools mPileup</h3>
+
+<p>This is require a BAM file of the mapped reads and a BED formatted file of SNP locations then running <a href="http://www.htslib.org/doc/samtools-1.2.html">Samtools</a> mpileup getting the reads at the SNP locations. Remember, BED files are 0-based and half-open (start position is included, end position not). If the SNP occurs at 1-based position <em>x</em>, the BEC file coordinates would be <em>x-1, x</em>.</p>
+
+<pre><code class="language-bash">samtools mpileup -l bed_file bam_file &gt; out.txt
+</code></pre>
+
+<p>BAM files are not included in the sample data due to file size. Pileup files are available in <em>sample_data/pileup_files</em>.</p>
+
+<h3 id="step-2-decode-pileup-files">Step 2: Decode pileup files</h3>
+
+<p>Samtools pileup files use non-obvious notation for the read-level nucleotides, so this script decodes the output into a user-friendly format.</p>
+
+<p>If interested, <code>.</code> stands for a match to the reference on the forward strand, <code>,</code> for a match on the reverse strand, <code>ACGTN</code> for mismatch on forward strand, and <code>acgtn</code> for mismatch on reverse strand.</p>
+
+<p>In <em>sample_data</em>, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#decode-pileup-pe-py">decode_pileup_pe.py</a>,</p>
+
+<pre><code class="language-bash">python ../scripts/decode_pileup_pe.py -o=snp-info pileup_files/F2-1_pileup.txt \
+pileup_files/F2-2_pileup.txt pileup_files/F2-3_pileup.txt pileup_files/F2-4_pileup.txt \
+pileup_files/F2-5_pileup.txt pileup_files/mother-sample_pileup.txt pileup_files/father-sample_pileup.txt
+</code></pre>
+
+<p>This will output <em>snp-info_decoded_pileup.tsv</em>.</p>
+
+<p>The output file includes sample name, chromosome, position, and 8 columns &ldquo;A,C,G,T,a,c,t,g&rdquo;. &ldquo;A,C,G,T&rdquo; are forward strand reads and &ldquo;a,c,g,t&rdquo; are reverse strand reads. Number indicates number of reads supporting that nucleotide at the position.</p>
+
+<h3 id="step-3-determine-genotype">Step 3: Determine genotype</h3>
+
+<p>With read information from all SNP positions, we can how genotype the samples. It determines which nucleotides are different between the mother and father sample and guesses genotype. Positions where mother and father are inditinguishable are reported as such.</p>
+
+<p>For example, if the mother sample has reads supporting &ldquo;A&rdquo; and &ldquo;c&rdquo; and the father sample has reads supporting &ldquo;A&rdquo; and &ldquo;g&rdquo;, &ldquo;c&rdquo; and &ldquo;g&rdquo; will be used to determine genotype. Samples with only &ldquo;c&rdquo; reads will be called &ldquo;mother&rdquo;, samples with only &ldquo;g&rdquo; reads will be called &ldquo;father&rdquo;, and samples with &ldquo;c&rdquo; and &ldquo;g&rdquo; reads will be called &ldquo;heterozygous&rdquo;.</p>
+
+<p>In the <em>sample_data</em> folder, run <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/#pileup-genotype-pe-py">pileup_genotype_pe.py</a>,</p>
+
+<pre><code class="language-bash">python ../scripts/pileup_genotype_pe.py -m=mother-sample -f=father-sample \
+snp-info_decoded_pileup.tsv
+</code></pre>
+
+<p>This creates output file <em>snp-info_decode_pileup_genotyped.tsv</em>.</p>
+
+<p><strong>Note</strong>: In the output file, do not use positions with have &ldquo;NA&rdquo; listed as the genotype for any of the samples.
+When one parent is genotyped &ldquo;NA&rdquo;, there was a distinguishable difference between the parents but one parent was incorrectly genotype (this can happen when one parent is heterozygous).
+Positions where one of the other samples is genotype &ldquo;NA&rdquo; indicates insufficient coverage at that position to determine genotype.</p>
+
+<p>For the sample data, the first two SNPs are indistinguishable in the parents. The last SNP has multiple &ldquo;NA&rdquo; genotypes. The third SNP is the only useful position.</p>
+
+<h2 id="real-data">Real Data</h2>
+
+<p>This method was designed to epigenotype a group of F2 individuals from a cross of genetically identical plants. Analysis of this experiment is currently under review for publication. The data will be available to the public when the paper is published. Check back for updates.</p>
+
+
+			<aside class="copyright" role="note">
+				
+				&copy; 2017 Released under the MIT license &ndash;
+				
+				Documentation built with
+				<a href="https://www.gohugo.io" target="_blank">Hugo</a>
+				using the
+				<a href="http://github.com/digitalcraftsman/hugo-material-docs" target="_blank">Material</a> theme.
+			</aside>
+
+			<footer class="footer">
+				
+
+<nav class="pagination" aria-label="Footer">
+  <div class="previous">
+  
+      <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/" title="Transgenerational Inheritance">
+        <span class="direction">
+          Previous
+        </span>
+        <div class="page">
+          <div class="button button-previous" role="button" aria-label="Previous">
+            <i class="icon icon-back"></i>
+          </div>
+          <div class="stretch">
+            <div class="title">
+              Transgenerational Inheritance
+            </div>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+
+  <div class="next">
+  
+      <a href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/" title="Appendix">
+        <span class="direction">
+          Next
+        </span>
+        <div class="page">
+          <div class="stretch">
+            <div class="title">
+              Appendix
+            </div>
+          </div>
+          <div class="button button-next" role="button" aria-label="Next">
+            <i class="icon icon-forward"></i>
+          </div>
+        </div>
+      </a>
+  
+  </div>
+</nav>
+
+
+
+
+
+			</footer>
+		</div>
+	</article>
+
+	<div class="results" role="status" aria-live="polite">
+		<div class="scrollable">
+			<div class="wrapper">
+				<div class="meta"></div>
+				<div class="list"></div>
+			</div>
+		</div>
+	</div>
+</main>
+
+    <script>
+    
+      var base_url = 'https:\/\/schmitzlab.github.io\/stable-transgenerational-inheritance-of-DNA-methylation\/';
+      var repo_id  = 'schmitzlab\/stable-transgenerational-inheritance-of-DNA-methylation';
+    
+    </script>
+
+    <script src="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/javascripts/application.js"></script>
+    
+
+    <script>
+      /* Add headers to scrollspy */
+      var headers   = document.getElementsByTagName("h2");
+      var scrollspy = document.getElementById('scrollspy');
+
+      if(scrollspy) {
+        if(headers.length > 0) {
+          for(var i = 0; i < headers.length; i++) {
+            var li = document.createElement("li");
+            li.setAttribute("class", "anchor");
+
+            var a  = document.createElement("a");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", headers[i].innerHTML);
+            a.innerHTML = headers[i].innerHTML;
+
+            li.appendChild(a)
+            scrollspy.appendChild(li);
+          }
+        } else {
+          scrollspy.parentElement.removeChild(scrollspy)
+        }
+
+
+        /* Add permanent link next to the headers */
+        var headers = document.querySelectorAll("h1, h2, h3, h4, h5, h6");
+
+        for(var i = 0; i < headers.length; i++) {
+            var a = document.createElement("a");
+            a.setAttribute("class", "headerlink");
+            a.setAttribute("href", "#" + headers[i].id);
+            a.setAttribute("title", "Permanent link")
+            a.innerHTML = "#";
+            headers[i].appendChild(a);
+        }
+      }
+    </script>
+
+    
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.8.0/highlight.min.js"></script>
+    <script>hljs.initHighlightingOnLoad();</script>
+  </body>
+</html>
+
