@@ -7,7 +7,7 @@ from functools import partial
 from decodingpath import *
 from transitions import Transitions
 
-# Usage: python epigenotyping_pe_v7.3 [-q] [-n-mpv] [-t-out] [-g=generation]  [-c=bin_comb_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_samples] [-f=father_samples] [-b=bin_size] [-t=cent_start,cent_end[,cent2_start,cent2_end]] <input_file>
+# Usage: python epigenotyping_pe_v1.7.3.py [-q][-h] [-n-mpv] [-t-out] [-g=generation]  [-c=bin_comb_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_samples] [-f=father_samples] [-b=bin_size] [-t=cent_start,cent_end[,cent2_start,cent2_end]] <input_file>
 
 NUMPROC=1
 BINSIZE=100000
@@ -29,7 +29,7 @@ def processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, 
 			centStr += '; {:s}-{:s}'.format( bth_util.binSizeToStr( cent[si] ), bth_util.binSizeToStr( cent[si+1] ) )
 		centStr = centStr[2:]
 	
-	info = '#from_script: epigenotyping_pe_v7.3.py; in_file:{:s}; bin_size:{:s}; decoding:{:s}; generation:{:d}; class_probs:{:s}; combine_bins_threshold:{:d}; centromere:{:s}; mpv_check:{:s}'.format( os.path.basename( inFileStr ), bth_util.binSizeToStr( binSize ), formatDecoding( decoding).lower().replace('and',','), generation, ','.join( formatClassProbs( generation ) ), combineBins, centStr.replace(';', ',').replace(' ',''), str(mpvCheck) )
+	info = '#from_script: epigenotyping_pe_v1.7.3.py; in_file:{:s}; bin_size:{:s}; decoding:{:s}; generation:{:d}; class_probs:{:s}; combine_bins_threshold:{:d}; centromere:{:s}; mpv_check:{:s}'.format( os.path.basename( inFileStr ), bth_util.binSizeToStr( binSize ), formatDecoding( decoding).lower().replace('and',','), generation, ','.join( formatClassProbs( generation ) ), combineBins, centStr.replace(';', ',').replace(' ',''), str(mpvCheck) )
 	if isPrint:
 		print( 'Weighted methylation file:', os.path.basename( inFileStr ) )
 		print( 'Bin size:', bth_util.binSizeToStr( binSize ) )
@@ -446,11 +446,11 @@ def determineOutputFileName( inFileStr, outID, binSize, decoding, generation, co
 	outBaseName = os.path.basename( inFileStr )
 	if outID == None:
 		if '_wm_pos_' in inFileStr:
-			outFileStr = outBaseName.replace( '_wm_pos_', '_epigenotype-v7.3_{:s}_g-{:d}_'.format( bth_util.binSizeToStr(binSize), generation ) )
+			outFileStr = outBaseName.replace( '_wm_pos_', '_epigenotype-v1.7.3_{:s}_g-{:d}_'.format( bth_util.binSizeToStr(binSize), generation ) )
 		else:
-			outFileStr = 'out_epigenotype-v7.3_{:s}_g-{:d}.tsv'.format( bth_util.binSizeToStr(binSize), generation )
+			outFileStr = 'out_epigenotype-v1.7.3_{:s}_g-{:d}.tsv'.format( bth_util.binSizeToStr(binSize), generation )
 	else:
-		outFileStr = '{:s}_epigenotype-v7.3_{:s}_g-{:d}.tsv'.format( outID, bth_util.binSizeToStr(binSize), generation )
+		outFileStr = '{:s}_epigenotype-v1.7.3_{:s}_g-{:d}.tsv'.format( outID, bth_util.binSizeToStr(binSize), generation )
 		
 	# combining bins
 	if combineBins > 0:
@@ -560,7 +560,7 @@ def parseInputs( argv ):
 	processInputs( inFileStr, numProc, binSize, outID, parentLabelAr, decoding, generation, combineBins, centromere, isPrint, mpvCheck, tmOut )
 
 def printHelp():
-	print( 'Usage:\tpython epigenotyping_pe_v7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]\n\t[-c=bin_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_\n\tsamples][-f=father_samples] [-b=bin_size] [-t=centromere] <input_file>' )
+	print( 'Usage:\tpython epigenotyping_pe_v1.7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]\n\t[-c=bin_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_\n\tsamples][-f=father_samples] [-b=bin_size] [-t=centromere] <input_file>' )
 	print()
 	print( 'Requried:' )
 	print( 'input_file\ttab-delimited file of of weighted methylation by position for samples' )

@@ -2,7 +2,6 @@
 
 # Scripts used in the paper Stable Transgenerational Inheritance of DNA methylation
 
-
 ## Set up
 
 * All python scripts are meant for Python 3.4+
@@ -233,43 +232,50 @@ Optional:
 -p=num_proc    num processors to use [default 1]
 ```
 
-### decodingpath3.py
+### decodingpath.py
 Utility script used by `epigenotyping_pe_combbin_fb-vit_cent.py`; includes code for forward-backward decoding and Viterbi decoding
 
 ### transitions.py
 Utility script used by `epigenotyping_pe_combbin_fb-vit_cent.py`; computes the transition matrix
 
-### epigenotyping_pe_combbin_fb-vit_cent.py
+### epigenotyping_pe_v1.7.3.py
 Major script which generates epigenotype map of samples based on *mother* and *father* methylomes
 
 Input file is output of `weighted_meth_by_pos_pe.py`
 
 ```
-Usage:
-python epigenotyping_pe_combbin.py [-u] [-c=bin_thresh] [-d=decoding_type][-p=num_proc]
-[-o=out_id] [-m=mother_sample] [-f=father_sample] [-b=bin_size] <input_file>
+Usage:  python epigenotyping_pe_v1.7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]
+        [-c=bin_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_
+        samples][-f=father_samples] [-b=bin_size] [-t=centromere] <input_file>
 
-Required:
-input_file        file of of weighted methylation by position for samples
+Requried:
+input_file	tab-delimited file of of weighted methylation by position for samples
 
 Optional:
--u                uniform class weights [default 1:2:1 for mother,
-                  MPV,father]
--d=decode_type    decoding type to use (capitalization ignored) [default A]
+-q                quiet; do not print progress
+-h                print help and exit
+-n-mpv            do not check for systematic mid-parent bias
+-t-out            write transition matrix to file
+-g=generation     generation of self-crossing; used to determine classification
+                  probabilities; use 0 for uniform weight [default 2]
+-d=decode_type    decoding type to use (capitlization ignored) [default B]
                   Viterbi="v" or "viterbi"
                   Forward-Backward="forwardbackward", "f" or "fb"
-                  Both="all" or "a"
+                  All (FB and Vit independently)="all" or "a"
+                  Both (FB then Vit)="both" or "b"
                   Off="false", "none", or "n"
 -o=out_id         identifier for output file [default "out" or variation of
                   input file name]
--p=num_proc       number of processors [default 1]
+-p=num_proc       number of processors [default 1
 -c=bin_thresh     minimum number of features per bin to be classified
-                  groups bins to reach this number [default 3]
--m=mother_label   sample name of mother; for correct classification
+                  groups bins to reach this number [default 3
+-m=mother_label   comma-separated sample name(s) of mother
                   [default mother]
--f=father_label   sample name of father; for correct classification
+-f=father_label   comma-separated sample name(s) of father
                   [default father]
 -b=bin_size       size of bins in bp [default 100kbp]
+-t=centromere     centromere coordinates as "start,end"; can include multipe
+                  centromeres as "start1,end1,start2,end2..." [default None]
 ```
 
 ### simulation_accuracy.py
