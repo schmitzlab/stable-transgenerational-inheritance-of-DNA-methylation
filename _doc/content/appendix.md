@@ -216,7 +216,7 @@ Optional:
                 [default all]
 ```
 
-## epigenotyping_pe_v7.3.py
+## epigenotyping_pe_v1.7.3.py
 - Required python imports: sys, math, multiprocessing, subprocess, os, numpy, pandas, sklearn, functools
 - Other required files: bth_util, decodingpath, transitions
     - decodingpath.py includes code for the smoothing algorithms (forward-backward and Viterbi)
@@ -224,7 +224,7 @@ Optional:
 - This script is run *per chromosome*.
 
 ```nohighlight
-Usage:  python epigenotyping_pe_v7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]
+Usage:  python epigenotyping_pe_v1.7.3.py [-q] [-n-mpv] [-t-out] [-g=generation]
         [-c=bin_thresh] [-d=decoding_type] [-p=num_proc] [-o=out_id] [-m=mother_
         samples][-f=father_samples] [-b=bin_size] [-t=centromere] <input_file>
 

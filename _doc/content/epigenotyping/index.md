@@ -81,14 +81,14 @@ The main input for epigenotyping is the output of `weighted_meth_by_pos_pe.py`.
 
 This is the main script. It accepts several parameters. Defaults were chosen for the paper but will need to be updated depending on species, filial generation, coverage, ect. 
 
-In the *sample_data* folder, run [epigenotyping_pe_v7.3.py](/appendix/#epigenotyping-pe-v7-3-py)
+In the *sample_data* folder, run [epigenotyping_pe_v1.7.3.py](/appendix/#epigenotyping-pe-v1-7-3-py)
 
 ```bash
-python ../scripts/epigenotyping_pe_v7.3.py -g=2 -b=50kb -c=3 -t=3300kb,6300kb \
+python ../scripts/epigenotyping_pe_v1.7.3.py -g=2 -b=50kb -c=3 -t=3300kb,6300kb \
 -m=mother-sample -f=father-sample sample-data_wm_pos_Chr1.tsv
 ```
 
-This will create a file name *sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv*
+This will create a file name *sample-data_epigenotype-v1.7.3_50kbp_g-2_Chr1_cb-3_both.tsv*
 
 ### Step 4: Graphing
 Information coming soon.
@@ -99,10 +99,10 @@ Once you have an epigenotype map, you can get approximate crossover locations an
 In the *sample_data* folder, run [find_crossovers.py](/appendix/#find-crossovers-py)
 
 ```bash
-python ../scripts/find_crossovers.py sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both.tsv
+python ../scripts/find_crossovers.py sample-data_epigenotype-v1.7.3_50kbp_g-2_Chr1_cb-3_both.tsv
 ```
 
-This will create two files: *sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_count.tsv* (number of breakpoints per sample) and *sample-data_epigenotype-v7.3_50kbp_g-2_Chr1_cb-3_both_pos.tsv* (location of breakpoints)
+This will create two files: *sample-data_epigenotype-v1.7.3_50kbp_g-2_Chr1_cb-3_both_count.tsv* (number of breakpoints per sample) and *sample-data_epigenotype-v1.7.3_50kbp_g-2_Chr1_cb-3_both_pos.tsv* (location of breakpoints)
 
 ## SNP Verification
 
