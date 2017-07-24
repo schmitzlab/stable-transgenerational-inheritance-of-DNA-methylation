@@ -1,6 +1,8 @@
 **For additional information, including a tutorial and sample data for the epigenotyping procedure, check out the [updated documentation](https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/).**
 
-# Scripts used in the paper Stable Transgenerational Inheritance of DNA methylation
+# Stable inheritance of DNA methylation allows creation of epigenotype maps and the study of epiallele inheritance patterns in the absence of genetic variation
+
+[![DOI](https://zenodo.org/badge/80533401.svg)](https://zenodo.org/badge/latestdoi/80533401)
 
 ## Set up
 
