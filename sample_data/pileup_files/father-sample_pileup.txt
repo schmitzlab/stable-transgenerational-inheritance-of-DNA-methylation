@@ -1,4 +1,0 @@
-Chr1	1947646	G	21	.aa..A.aaaaa.aa.a..aa	AAF<FFFFEFEFE.7FAFF/A
-Chr1	3150227	C	17	,.,T.,..T,,,T.,,,	F/E7/FAFFEFFFFAAA
-Chr1	6357120	G	23	..aa.a.a.a.aaa.a..a....	A7EFFFFEFEEFFFFEEFEEAEF
-Chr1	7231264	G	27	.a.a...aa....a....a.a..aa.a	AEEEEF<FFEFEFEFEFFFFFFEFAEE
