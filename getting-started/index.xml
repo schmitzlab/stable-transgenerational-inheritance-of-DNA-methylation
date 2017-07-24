@@ -8,19 +8,19 @@
     <language>en-us</language>
     <copyright>Released under the MIT license</copyright>
     <lastBuildDate>Fri, 02 Jun 2017 00:11:02 +0100</lastBuildDate>
-
+    
 	<atom:link href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/index.xml" rel="self" type="application/rss+xml" />
-
-
+    
+    
     <item>
       <title>Getting started</title>
       <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</link>
       <pubDate>Fri, 02 Jun 2017 00:11:02 +0100</pubDate>
-
+      
       <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</guid>
       <description>Installation To install, either clone this repositiory or download the source code.
  # Using git clone git clone https://github.com/schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation.git  Set-Up All python scripts were created for Phyton 3.4+ and specifically tested with Python 3.5.2. All scripts import sys and os. Many import math, glob, bisect, and random. Several import pandas, numpy, scipy, functools, and sklearn. Any script ending in _pe.py has the ability to be run using multiple processors and imports multiprocessing and subprocess.</description>
     </item>
-
+    
   </channel>
 </rss>
