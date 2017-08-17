@@ -160,4 +160,15 @@ For the sample data, the first two SNPs are indistinguishable in the parents. Th
 
 ## Real Data
 
-This method was designed to epigenotype a group of F2 individuals from a cross of genetically identical plants. Analysis of this experiment is currently under review for publication. The data will be available to the public when the paper is published. Check back for updates.
+This method was designed to epigenotype a group of F2 individuals from a cross of genetically identical plants.
+
+For an in-depth description of the methods, see [Methods](https://genomebiology.biomedcentral.com/articles/10.1186/s13059-017-1288-x#Sec12).
+
+To download the raw sequencing data and/or allC files for the mother, father, and F2 samples, see [GEO accession GSE94298](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE94298).
+
+Samples _Line 49-G24 - mother_ and _Line 69-G20 - father_ were used as the mother and father samples, respectively. Samples _Line49-G1_ and _Line 49-G2_ were used as mother replicates when epigenotyping.
+Samples _Line69-G1_ and _Line69-G2_ were used as father replicates when epigenotyping.
+Twenty F2 samples, _Line49x69 - F2-1_ to _Line49x69 - F2-20_ are the F2 samples to be epigenotyped.
+
+AllC files for select samples can be downloaded using "Custom Download".
+![custom download](img/custom_download.png)

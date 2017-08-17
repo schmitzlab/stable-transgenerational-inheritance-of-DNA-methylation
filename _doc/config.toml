@@ -57,7 +57,7 @@ googleAnalytics = ""
 	weight = 20
     
 [[menu.main]]
-    name    = "Transgeneration inheritance"
+    name    = "Transgenerational inheritance"
     url     = "transgenerational/"
     weight  = 30
 

@@ -7,9 +7,58 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <copyright>Released under the MIT license</copyright>
+    <lastBuildDate>Thu, 01 Jun 2017 21:07:13 +0100</lastBuildDate>
     
 	<atom:link href="https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Home</title>
+      <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</link>
+      <pubDate>Thu, 01 Jun 2017 21:07:13 +0100</pubDate>
+      
+      <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/</guid>
+      <description>Scripts and information used in the paper Stable inheritance of DNA methylation allows creation of epigenotype maps and the study of epiallele inheritance patterns in the absence of genetic variation.</description>
+    </item>
+    
+    <item>
+      <title>Getting started</title>
+      <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</link>
+      <pubDate>Fri, 02 Jun 2017 00:11:02 +0100</pubDate>
+      
+      <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/getting-started/</guid>
+      <description>Installation To install, either clone this repositiory or download the source code.
+ # Using git clone git clone https://github.com/schmitzlab/stable-transgenerational-inheritance-of-DNA-methylation.git  Set-Up All python scripts were created for Phyton 3.4+ and specifically tested with Python 3.5.2. All scripts import sys and os. Many import math, glob, bisect, and random. Several import pandas, numpy, scipy, functools, and sklearn. Any script ending in _pe.py has the ability to be run using multiple processors and imports multiprocessing and subprocess.</description>
+    </item>
+    
+    <item>
+      <title>Transgenerational Inheritance</title>
+      <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/</link>
+      <pubDate>Fri, 02 Jun 2017 00:11:02 +0100</pubDate>
+      
+      <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/transgenerational/</guid>
+      <description>Sample data is not provided for this topic. For illustrative purposes, assume that three generations of line &amp;ldquo;A&amp;rdquo; are available and they are named &amp;ldquo;A-1&amp;rdquo;, &amp;ldquo;A-2&amp;rdquo;, &amp;ldquo;A-3&amp;rdquo;. This species only has two chromosomes, &amp;ldquo;Chr1&amp;rdquo; and &amp;ldquo;Chr2&amp;rdquo;.
+Beginnings Set up requirements  All samples have allC files.  AllC file are tab-delimited. They have the following columns  Chromosome Position (1-indexed) Strand (+ or -) Context (3 bp sequence) Number methylated reads Number total reads Is the position methylated?</description>
+    </item>
+    
+    <item>
+      <title>Epigenotyping</title>
+      <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/</link>
+      <pubDate>Fri, 02 Jun 2017 00:11:02 +0100</pubDate>
+      
+      <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/epigenotyping/</guid>
+      <description>Beginnings Set up requirements  All samples have allC files.  AllC file are tab-delimited. They have the following columns  Chromosome Position (1-indexed) Strand (+ or -) Context (3 bp sequence) Number methylated reads Number total reads Is the position methylated? (1 for yes)   All of the allC files are named as &amp;ldquo;allc_samplename_chromosome.tsv&amp;rdquo;. All of the allC files are in one directory.  Determining the correct parameters  Information coming soon  Workflow Step 1: Find informative cytosines There should be two parent samples and need to determine which positions have different methylation.</description>
+    </item>
+    
+    <item>
+      <title>Appendix</title>
+      <link>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/</link>
+      <pubDate>Fri, 02 Jun 2017 00:11:02 +0100</pubDate>
+      
+      <guid>https://schmitzlab.github.io/stable-transgenerational-inheritance-of-DNA-methylation/appendix/</guid>
+      <description>This page includes list of inputs and parameter options for all scripts. This should not be used as workflow or tutorial, but is a resource when necessary for specific scripts.
+combine_allc_pe.py  Require imports: sys, multiprocessing, subprocess, os, gzip Expects allC files to be for a single chromosome Accepts gzipped allC files  Usage: python combine_allc_pe.py [-q] [-h] [-f] [-p=num_proc] [-o=out_id] [-c=chrm_list | -cf=fasta_index] &amp;lt;allc_path&amp;gt; &amp;lt;sample_name&amp;gt; [sample_name]* Required: allc_path path to allC files sample_name name of sample; used to find allC files when &amp;quot;-f&amp;quot; flag set, file with sample names listed one per line Optional: -q quiet; do not print progress -h print help message and exit -f sample names are in file -p=num_proc number of processors to use [default 1] -o=out_id output file identifier [default &amp;quot;combined&amp;quot;] -c=chrm_list	comma-separated list of chrms to use [default for arabidopsis] -cf=fasta_index	fasta index file with chrms to use  unmethylate_allc_pe.</description>
+    </item>
     
   </channel>
 </rss>
